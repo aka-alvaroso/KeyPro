@@ -7,14 +7,14 @@ const GameSelector = () => {
 
   const [mode, setMode] = useState('solo')
   const [type, setType] = useState('words')
-  const [difficulty, setDifficulty] = useState('hard')
+  const [difficulty, setDifficulty] = useState('easy')
   const [selector, setSelector] = useState('solo')
 
   const [wordsSettings, setWordsSettings] = useState('50')
   const [timeSettings, setTimeSettings] = useState('60')
-  const [typeSettings, setTypeSettings] = useState('python')
+  const [codeSettings, setCodeSettings] = useState('python')
 
-  const [showSettings, setShowSettings] = useState(true);
+  const [showSettings, setShowSettings] = useState(false);
 
   function handleClick (btn) {
 
@@ -65,12 +65,12 @@ const GameSelector = () => {
         break
       case 'hard':
         setSelector('hard')
+        setDifficulty('hard')
         setShowSettings(false)
         break
     }
 
   }
-
 
   function handleClickMenu (btn) {
 
@@ -103,23 +103,23 @@ const GameSelector = () => {
 
 
       case 'python':
-        setTypeSettings('python')
+        setCodeSettings('python')
         setShowSettings(false)
         break
       case 'javascript':
-        setTypeSettings('javascript')
+        setCodeSettings('javascript')
         setShowSettings(false)
         break
       case 'c++':
-        setTypeSettings('c++')
+        setCodeSettings('c++')
         setShowSettings(false)
         break
       case 'html':
-        setTypeSettings('html')
+        setCodeSettings('html')
         setShowSettings(false)
         break
       case 'java':
-        setTypeSettings('java')
+        setCodeSettings('java')
         setShowSettings(false)
         break
     }
@@ -157,8 +157,6 @@ const GameSelector = () => {
         className={`min-w-48 bg-stone-900 text-center rounded-full transition-all duration-500 ease-in-out transform ${showSettings ? 'opacity-100 max-h-96 scale-100 overflow-visible' : 'opacity-0 max-h-0 scale-90 overflow-hidden'}`}
       >
 
-        {/* <div className='min-w-48 bg-stone-900 text-center rounded-full'> */}
-
         {
           selector === 'solo' ?
             <>
@@ -186,11 +184,11 @@ const GameSelector = () => {
                     Lenguaje de programación
                   </span>
                   <br />
-                  <button onClick={() => handleClickMenu('python')} className={`${typeSettings === 'python' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-stone-100`}>Python</button>
-                  <button onClick={() => handleClickMenu('javascript')} className={`${typeSettings === 'javascript' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-stone-100`}>JavaScript</button>
-                  <button onClick={() => handleClickMenu('c++')} className={`${typeSettings === 'c++' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-stone-100`}>C++</button>
-                  <button onClick={() => handleClickMenu('html')} className={`${typeSettings === 'html' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-stone-100`}>HTML</button>
-                  <button onClick={() => handleClickMenu('java')} className={`${typeSettings === 'java' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-stone-100`}>Java</button>
+                  <button onClick={() => handleClickMenu('python')} className={`${codeSettings === 'python' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-stone-100`}>Python</button>
+                  <button onClick={() => handleClickMenu('javascript')} className={`${codeSettings === 'javascript' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-stone-100`}>JavaScript</button>
+                  <button onClick={() => handleClickMenu('c++')} className={`${codeSettings === 'c++' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-stone-100`}>C++</button>
+                  <button onClick={() => handleClickMenu('html')} className={`${codeSettings === 'html' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-stone-100`}>HTML</button>
+                  <button onClick={() => handleClickMenu('java')} className={`${codeSettings === 'java' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-stone-100`}>Java</button>
                 </> : <div className='h-16' />
         }
 

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 import Navbar from '../components/Navbar'
 import GameSelector from '../components/GameSelector'
+import Test from '../components/Test'
 
 const Home = () => {
   return (
@@ -17,9 +18,10 @@ const Home = () => {
         {/* Game Selector */}
         <GameSelector />
 
-        <div className='w-4/6 my-8 text-stone-600 text-3xl'>
-          El sol brillaba con fuerza mientras las aves volaban alto en el cielo. Los árboles se mecían suavemente con el viento, y las flores llenaban el aire con su aroma. La tranquilidad del paisaje invitaba a descansar, a reflexionar y a disfrutar del momento presente sin preocupaciones.
-        </div>
+        {/* Test */}
+        <Test text={'El sol brillaba con fuerza mientras las aves volaban alto en el cielo. Los árboles se mecían suavemente con el viento, y las flores llenaban el aire con su aroma. La tranquilidad del paisaje invitaba a descansar, a reflexionar y a disfrutar del momento presente sin preocupaciones.'} />
+
+
         <div className='w-4/6 h-2 bg-stone-700 rounded-full '>
 
         </div>
