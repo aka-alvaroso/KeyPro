@@ -1,0 +1,74 @@
+/* Contenedor principal del test */
+.test-container {
+  max-width: 66%;
+  width: 66%;
+  margin: 2rem auto;
+  font-size: 1.875rem;
+  /* texto grande */
+  color: #4A4A4A;
+  /* stone-600 en Tailwind (text-stone-600) */
+  white-space: pre-wrap;
+  /* Permite respetar saltos de línea */
+  word-wrap: break-word;
+  /* Permite que las palabras se dividan en caso de ser muy largas */
+  overflow-wrap: break-word;
+  /* Mismo que word-wrap pero con mejor soporte */
+  line-height: 2rem;
+  /* Controla la altura entre líneas */
+}
+
+/* Letras correctas */
+.correct {
+  color: #16a34a;
+  /* Verde (text-green-600 en Tailwind) */
+  position: relative;
+}
+
+/* .correct::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80%;
+  height: 2px;
+  background-color: #16a34a;
+} */
+
+/* Letras incorrectas */
+.incorrect {
+  color: #dc2626;
+  /* Rojo (text-red-600 en Tailwind) */
+  position: relative;
+}
+
+/* .incorrect::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80%;
+  height: 2px;
+  background-color: #dc2626;
+} */
+
+/* Clase para el cursor */
+.cursor {
+  color: #fb923c;
+  /* Naranja (text-orange-700 en Tailwind) */
+  position: relative;
+}
+
+/* .cursor::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80%;
+  height: 2px;
+  background-color: #fb923c;
+} */
+
+/* Asegura que los espacios en blanco no se colapsen */
+.whitespace {
+  white-space: pre-wrap;
+}

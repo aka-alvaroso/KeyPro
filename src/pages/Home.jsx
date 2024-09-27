@@ -6,6 +6,9 @@ import Navbar from '../components/Navbar'
 import GameSelector from '../components/GameSelector'
 import Test from '../components/Test'
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons'
+
 const Home = () => {
   return (
     <div className="w-screen h-screen bg-stone-800 text-stone-400 flex flex-col items-center">
@@ -25,6 +28,8 @@ const Home = () => {
         <div className='w-4/6 h-2 bg-stone-700 rounded-full '>
 
         </div>
+
+        <p className='mt-4 text-stone-600'><FontAwesomeIcon icon={faArrowRotateRight} /> Pulsa <span className='p-1 bg-stone-900 rounded-md text-stone-500'>Escape</span> para reiniciar</p>
 
       </main>
 

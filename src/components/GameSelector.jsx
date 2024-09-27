@@ -16,6 +16,11 @@ const GameSelector = () => {
 
   const [showSettings, setShowSettings] = useState(false);
 
+
+  window.addEventListener('keydown', () => {
+    setShowSettings(false)
+  })
+
   function handleClick (btn) {
 
     switch (btn) {
@@ -31,9 +36,9 @@ const GameSelector = () => {
         setMode('challenge')
         setShowSettings(true)
         break
-      case 'training':
-        setSelector('training')
-        setMode('training')
+      case 'versus':
+        setSelector('versus')
+        setMode('versus')
         setShowSettings(false)
         break
 
@@ -131,9 +136,9 @@ const GameSelector = () => {
       <div className='w-full flex justify-around items-center'>
         <div>
           <button onClick={() => handleClick('solo')} className={`${mode === 'solo' ? 'active' : ''}  text-sm m-2 p-1 rounded-full transition hover:text-stone-100`}>Solo</button>
-          {/* <button className='text-sm m-2 p-1 rounded-full transition hover:text-stone-100'>Competencia</button> */}
           <button onClick={() => handleClick('challenge')} className={`${mode === 'challenge' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-stone-100`}>Desafío</button>
-          <button onClick={() => handleClick('training')} className={`${mode === 'training' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-stone-100`}>Entrenamiento</button>
+          {/* <button onClick={() => handleClick('training')} className={`${mode === 'training' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-stone-100`}>Entrenamiento</button> */}
+          <button onClick={() => handleClick('versus')} className={`${mode === 'versus' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-stone-100 line-through`}>Competencia</button>
         </div>
 
         <span className='w-0.5 h-4/6 rounded-full bg-stone-700'></span>
