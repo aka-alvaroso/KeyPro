@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import axios from '../../axiosConfig';
 import { useState, useEffect } from 'react';
 
-const Test = ({ settings, setTestResults }) => {
+const Test = ({ sound, settings, setTestResults }) => {
   const [testStarted, setTestStarted] = useState(false);
   const [text, setText] = useState('');
 
@@ -17,6 +17,7 @@ const Test = ({ settings, setTestResults }) => {
   const [errors, setErrors] = useState(0)
 
   const words = text.split(' ')
+
 
   useEffect(() => {
     fetchText();
@@ -149,6 +150,12 @@ const Test = ({ settings, setTestResults }) => {
         return
       }
 
+
+      if (sound) {
+        const audio = new Audio('/keysound2.mp3');
+        audio.currentTime = 0;
+        audio.play();
+      }
 
       const isCorrect = typedChar === currentChar;
 

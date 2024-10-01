@@ -20,6 +20,8 @@ const Home = () => {
     language: 'normal'
   })
 
+  const [sound, setSound] = useState(false)
+
   const [results, setResults] = useState({
     isReady: false,
     score: 0,
@@ -33,7 +35,7 @@ const Home = () => {
     <div className="w-screen h-screen bg-stone-800 text-stone-400 flex flex-col items-center">
 
       {/* Navbar */}
-      <Navbar />
+      <Navbar sound={sound} setSound={setSound} />
 
       <main className="w-full max-w-screen-2xl h-4/6 p-4 flex flex-col items-center justify-center">
 
@@ -46,7 +48,7 @@ const Home = () => {
 
         {/* Test */}
         <div className={`flex-wrap w-4/6 my-8 text-stone-600 text-3xl ${results['isReady'] ? 'hidden' : 'block'}`}>
-          <Test settings={gameSettings} setTestResults={setResults} />
+          <Test sound={sound} settings={gameSettings} setTestResults={setResults} />
         </div>
 
         {/* Results */}

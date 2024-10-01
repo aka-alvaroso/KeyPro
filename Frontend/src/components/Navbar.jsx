@@ -2,21 +2,15 @@
 
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faKeyboard } from '@fortawesome/free-regular-svg-icons'
-import { faCrown } from '@fortawesome/free-solid-svg-icons'
 import { faBrush } from '@fortawesome/free-solid-svg-icons'
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { faVolumeHigh } from '@fortawesome/free-solid-svg-icons'
 import { faVolumeXmark } from '@fortawesome/free-solid-svg-icons'
 
-const Navbar = ({ active = 'home' }) => {
-
-  const [sound, setSound] = useState(true)
-
-
+const Navbar = ({ active = 'home', sound, setSound }) => {
 
   return (
     <nav className="w-full max-w-screen-2xl h-1/6  p-4 flex items-start justify-between">
@@ -38,4 +32,6 @@ export default Navbar;
 
 Navbar.propTypes = {
   active: PropTypes.string,
+  sound: PropTypes.bool,
+  setSound: PropTypes.func,
 }
