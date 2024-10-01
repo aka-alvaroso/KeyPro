@@ -1,0 +1,15 @@
+
+### Login de usuario
+POST http://localhost:3000/text/create
+Content-Type: application/json
+
+{
+  "content": "Este fin de semana, fui a un concierto de rock en un estadio local. Las entradas se agotaron rápidamente, y fue emocionante ver a mi banda favorita en vivo. La energía del público era increíble. Durante el concierto, tocaron sus éxitos más conocidos y algunas canciones nuevas. La atmósfera se llenó de luces brillantes y el sonido de las guitarras eléctricas. En un momento, el vocalista hizo un llamado a la acción, instando a todos a cuidar el medio ambiente. Al final del espectáculo, salí sintiéndome inspirado y emocionado. Sin duda, fue una experiencia inolvidable que quiero repetir.",
+  "numWords": 100,
+  "difficulty": "hard",
+  "type": "normal",
+  "language": "normal"
+}
+
+### Obtener un texto con parámetros
+GET http://localhost:3000/text/get?type=normal&numWords=10&difficulty=easy&language=normal
