@@ -114,12 +114,44 @@ const Test = ({ testStarted, setTestStarted, sound, settings, setTestResults, ti
         return;
       }
 
-      // Final del texto
-      if (cursor === text.length - 1 || timeRemaining === 0) {
+      if (settings.mode === 'timed' && timeRemaining <= 0) {
+        setTestStarted(false);
+
+        const minutes = seconds / 60;
+        const cpm = Math.round((successes + errors) / minutes);
+        const ppm = cpm / 5;
+        const accurate = Math.round((successes / (successes + errors)) * 100);
+        const time = Math.round(seconds);
+        const score = Math.round(Math.max(0, 100 * (0.2 * ppm / 100 + 0.6 * accurate / 100 - 0.2 * errors / (successes + errors))));
+
+        setTestResults({
+          isReady: true,
+          score: score,
+          ppm: ppm,
+          cpm: cpm,
+          accurate: accurate,
+          errors: errors,
+          totalChar: successes + errors,
+          time: time
+        });
+        console.log('Score: ', score);
+
+        return;
+      }
+
+      if (cursor === text.length - 1) {
+
+        if (settings.mode === 'timed' && timeRemaining > 0) {
+          setCursor(0)
+          setResults([])
+          fetchText();
+          return;
+        }
 
         setTestStarted(false);
 
-        if (seconds === 0 || (successes + errors) === 0) {
+        if (successes + errors === 0 || seconds === 0) {
+          console.log('No hay errores ni correctos');
           setTestResults({
             isReady: true,
             score: 0,
@@ -134,11 +166,11 @@ const Test = ({ testStarted, setTestStarted, sound, settings, setTestResults, ti
         }
 
         const minutes = seconds / 60;
-        const ppm = Math.round((successes / 5) / minutes);
         const cpm = Math.round((successes + errors) / minutes);
+        const ppm = cpm / 5;
         const accurate = Math.round((successes / (successes + errors)) * 100);
         const time = Math.round(seconds);
-        const score = Math.round(Math.max(0, 100 * (0.4 * ppm / 100 + 0.4 * accurate / 100 - 0.2 * errors / (successes + errors))));
+        const score = Math.round(Math.max(0, 100 * (0.2 * ppm / 100 + 0.6 * accurate / 100 - 0.2 * errors / (successes + errors))));
 
 
         setTestResults({
@@ -151,6 +183,8 @@ const Test = ({ testStarted, setTestStarted, sound, settings, setTestResults, ti
           totalChar: successes + errors,
           time: time
         });
+
+        console.log('Score: ', score);
 
         return;
       }
