@@ -90,7 +90,7 @@ export default {
     'bg-darkGreen-primary',
     'bg-darkGreen-secondary',
     'bg-darkGreen-accent',
-    'bg-darkGreen-background',
+    'bg-darkGreen-text',
 
     'border-darkGreen-primary',
     'border-darkGreen-secondary',

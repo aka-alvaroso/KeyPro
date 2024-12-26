@@ -1,4 +1,4 @@
-// /routes/userRoutes.js
+// /routes/textRoutes.js
 
 const express = require('express');
 const router = express.Router();

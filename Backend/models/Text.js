@@ -16,7 +16,7 @@ const textSchema = new Schema({
     enum: ['normal', 'code', 'phrases'],
     required: true
   },
-  language: { type: String, default: null }, // Lenguaje, null si es tipo "normal"
+  language: { type: String, default: null },
 }, { timestamps: true });
 
 const Text = mongoose.model('Text', textSchema);

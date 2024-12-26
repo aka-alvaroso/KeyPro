@@ -1,6 +1,7 @@
 import './index.css'
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
+import Auth from './pages/Auth';
 // import Rankings from './pages/Rankings';
 // import Login from './pages/Login';
 // import Register from './pages/Register';
@@ -12,6 +13,7 @@ function App () {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/auth" element={<Auth />} />
       {/* <Route path="/rankings" component={<Rankings />} /> */}
       {/* <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />

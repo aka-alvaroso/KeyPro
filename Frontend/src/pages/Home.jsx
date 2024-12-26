@@ -70,6 +70,11 @@ const Home = () => {
 
   const percent = Math.round((timeRemaining / gameSettings.time) * 100);
 
+  if (sessionStorage.getItem('loggedIn') !== 'true') {
+    sessionStorage.setItem('loggedIn', false);
+    sessionStorage.setItem('token', null);
+    sessionStorage.setItem('userData', null);
+  }
 
   return (
     <div className={` bg-${theme}-background text-${theme}-text w-screen h-screen  flex flex-col items-center justify-evenly`}>

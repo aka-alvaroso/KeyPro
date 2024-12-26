@@ -1,6 +1,5 @@
 // /controllers/textController.js
 
-
 const Text = require('../models/Text'); // Importa el modelo de Text
 
 // Función para crear y guardar un nuevo texto
@@ -35,10 +34,10 @@ const createText = async (req, res) => {
     // Enviar una respuesta con el texto guardado
     res.status(201).json(savedText);
 
-  } catch (error) {
+  } catch (e) {
     // Manejo de errores
-    console.error('Error al guardar el texto:', error);
-    res.status(500).json({ message: 'Error al guardar el texto', error });
+    console.error('Error al guardar el texto:', e);
+    res.status(500).json({ message: 'Error al guardar el texto', e });
   }
 };
 
@@ -55,8 +54,8 @@ const getTexts = async (req, res) => {
 
     const texts = await Text.find(filter);
     res.json(texts);
-  } catch (error) {
-    res.status(500).json({ message: 'Error al obtener textos', error: error.message })
+  } catch (e) {
+    res.status(500).json({ message: 'Error al obtener textos', error: e.message })
   }
 };
 

@@ -18,8 +18,8 @@ const Results = ({ results }) => {
 
   return (
     <>
-      <p className={`${results['isReady'] ? 'block' : 'hidden'} font-bold text-3xl text-left w-4/6 h-20`}>Resultados</p>
-      <div className={`${results['isReady'] ? 'block' : 'hidden'} w-4/6 rounded-lg grid grid-cols-3 gap-2`}>
+      <p className={`${results['isReady'] ? 'block' : 'hidden'} font-bold text-3xl text-left w-4/6`}>Resultados</p>
+      <div className={`${results['isReady'] ? 'block' : 'hidden'} mt-8 w-4/6 rounded-lg grid grid-cols-3 gap-2`}>
         <section className={`rounded-lg p-2 border-2 border-${theme}-primary`}>
           <p className={`text-${theme}-text`}>Puntuación</p>
           <p className='text-center text-7xl font-bold'>{results['score']}

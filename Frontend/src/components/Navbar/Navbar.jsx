@@ -2,9 +2,10 @@
 
 import PropTypes from 'prop-types';
 import { useTheme } from '../../context/ThemeContext';
+import { Link } from 'react-router-dom';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBrush } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRightToBracket, faBrush } from '@fortawesome/free-solid-svg-icons'
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import { faVolumeHigh } from '@fortawesome/free-solid-svg-icons'
 import { faVolumeXmark } from '@fortawesome/free-solid-svg-icons'
@@ -35,6 +36,22 @@ const Navbar = ({ sound, setSound, setSettingsModalIsOpen, setThemeModalIsOpen }
           className={`ml-4 text-xl text-${theme}-text border-none hover:text-${theme}-primary hover:cursor-pointer transition`}>
           {sound ? <FontAwesomeIcon icon={faVolumeHigh} /> : <FontAwesomeIcon icon={faVolumeXmark} />}
         </button>
+
+        {sessionStorage.getItem('loggedIn') === 'true' ?
+          <Link to="/profile">
+            <button className={`ml-4 bg-${theme}-primary bg-opacity-20 py-2 px-4 rounded-md text-md font-bold text-${theme}-primary hover:bg-opacity-75 hover:text-${theme}-background transition`}>
+              <FontAwesomeIcon icon={faArrowRightToBracket} /> Perfil
+            </button>
+          </Link>
+          :
+          <Link to="/auth">
+            <button className={`ml-4 bg-${theme}-primary bg-opacity-20 py-2 px-4 rounded-md text-md font-bold text-${theme}-primary hover:bg-opacity-75 hover:text-${theme}-background transition`}>
+              <FontAwesomeIcon icon={faArrowRightToBracket} /> Acceder
+            </button>
+          </Link>
+        }
+
+
       </div>
     </nav>
   )
