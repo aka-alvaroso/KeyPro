@@ -134,7 +134,30 @@ const Test = ({ testStarted, setTestStarted, sound, settings, setTestResults, ti
           totalChar: successes + errors,
           time: time
         });
-        console.log('Score: ', score);
+
+        if (sessionStorage.getItem('loggedIn') === 'true') {
+          axios.post('http://localhost:3000/user/update', {
+            email: JSON.parse(sessionStorage.getItem('userData')).email,
+            stats: {
+              score: score,
+              cpm: cpm,
+              ppm: ppm,
+              accurate: accurate,
+              errors: errors,
+              totalChar: successes + errors,
+              time: time
+            },
+            test: {
+              type: settings.type,
+              numWords: settings.numWords,
+              difficulty: settings.difficulty,
+            }
+          }).then((response) => {
+            console.log('Estadísticas actualizadas:', response.data);
+          }).catch((error) => {
+            console.error('Error al actualizar las estadísticas:', error);
+          });
+        }
 
         return;
       }
@@ -172,7 +195,6 @@ const Test = ({ testStarted, setTestStarted, sound, settings, setTestResults, ti
         const time = Math.round(seconds);
         const score = Math.round(Math.max(0, 100 * (0.2 * ppm / 100 + 0.6 * accurate / 100 - 0.2 * errors / (successes + errors))));
 
-
         setTestResults({
           isReady: true,
           score: score,
@@ -184,7 +206,29 @@ const Test = ({ testStarted, setTestStarted, sound, settings, setTestResults, ti
           time: time
         });
 
-        console.log('Score: ', score);
+        if (sessionStorage.getItem('loggedIn') === 'true') {
+          axios.post('http://localhost:3000/user/update', {
+            email: JSON.parse(sessionStorage.getItem('userData')).email,
+            stats: {
+              score: score,
+              cpm: cpm,
+              ppm: ppm,
+              accurate: accurate,
+              errors: errors,
+              totalChar: successes + errors,
+              time: time
+            },
+            test: {
+              type: settings.type,
+              numWords: settings.numWords,
+              difficulty: settings.difficulty,
+            }
+          }).then((response) => {
+            console.log('Estadísticas actualizadas:', response.data);
+          }).catch((error) => {
+            console.error('Error al actualizar las estadísticas:', error);
+          });
+        }
 
         return;
       }

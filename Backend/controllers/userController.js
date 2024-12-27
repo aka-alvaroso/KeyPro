@@ -57,37 +57,59 @@ const loginUser = async (req, res) => {
   }
 };
 
-const editUser = async (req, res) => {
+const updateStats = async (req, res) => {
 
   try {
+    const { email, stats, test } = req.body;
 
-    const { username, email, password, stats } = req.body;
+    const user = await User.findOne({ email });
 
-    if (username) {
-      user.username = username;
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    if (email) {
-      user.email = email;
-    }
+    const newStats = {
+      avgAccuracy: (user.stats.avgAccuracy * user.stats.totalTests + stats.accurate) / (user.stats.totalTests + 1),
+      avgScore: (user.stats.avgScore * user.stats.totalTests + stats.score) / (user.stats.totalTests + 1),
+      avgSpeed: (user.stats.avgSpeed * user.stats.totalTests + stats.cpm) / (user.stats.totalTests + 1),
+      bestScore: Math.max(user.stats.bestScore, stats.score),
+      bestSpeed: Math.max(user.stats.bestSpeed, stats.cpm),
+      numCharacters: user.stats.numCharacters + stats.totalChar,
+      numErrors: user.stats.numErrors + stats.errors,
+      numEasyTests: test.difficulty === 'easy' ? user.stats.numEasyTests + 1 : user.stats.numEasyTests,
+      numMediumTests: test.difficulty === 'medium' ? user.stats.numMediumTests + 1 : user.stats.numMediumTests,
+      numHardTests: test.difficulty === 'hard' ? user.stats.numHardTests + 1 : user.stats.numHardTests,
+      totalTests: user.stats.totalTests + 1
+    };
 
-    if (password) {
-      user.password = password;
-    }
+    user.stats = newStats;
 
-    if (stats) {
-      user.stats = stats;
-    }
+    await user.save();
 
-    const updatedUser = await user.save();
-
-    res.json(updatedUser);
-
+    res.status(200).json({ message: 'Estadísticas actualizadas correctamente' });
   } catch (e) {
     console.error('Error al editar el usuario:', e);
     res.status(500).json({ message: 'Error al editar el usuario', e });
   }
 
+}
+
+const getUserData = async (req, res) => {
+  try {
+    const { username } = req.headers;
+
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    res.status(200).json({ user });
+
+  } catch (e) {
+    console.error('Error al obtener el usuario:', e);
+    res.status(500).json({ message: 'Error al obtener el usuario', e });
+  }
 }
 
 const deleteUser = async (req, res) => {
@@ -115,7 +137,8 @@ const deleteUser = async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
-  editUser,
+  updateStats,
+  getUserData,
   deleteUser
 };
 
