@@ -2,8 +2,9 @@ import PropTypes from 'prop-types';
 import axios from '../../axiosConfig';
 import { useState, useEffect } from 'react';
 import { useTheme } from '../../context/ThemeContext';
+import { v4 as uuid } from 'uuid';
 
-const Test = ({ testStarted, setTestStarted, sound, settings, setTestResults, timeRemaining }) => {
+const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTestResults, timeRemaining }) => {
   const { theme } = useTheme();
 
   const [text, setText] = useState('');
@@ -14,6 +15,7 @@ const Test = ({ testStarted, setTestStarted, sound, settings, setTestResults, ti
   const [successes, setSuccesses] = useState(0)
   const [errors, setErrors] = useState(0)
 
+  const [hasResultsSent, setHasResultsSent] = useState(false);
 
 
   useEffect(() => {
@@ -63,9 +65,10 @@ const Test = ({ testStarted, setTestStarted, sound, settings, setTestResults, ti
         setTestStarted(true);
       }
 
+      console.log('Tecla presionada:', typedChar);
 
       // Reiniciar
-      if (typedChar === 'Escape') {
+      if (typedChar === 'Escape' || (typedChar === 'F5' && testResults.isReady) || (typedChar === 'r' && event.ctrlKey && testResults.isReady)) {
         setCursor(0)
         setResults([])
         setTestStarted(false)
@@ -87,6 +90,9 @@ const Test = ({ testStarted, setTestStarted, sound, settings, setTestResults, ti
         return;
       }
 
+      if (hasResultsSent) {
+        return;
+      }
 
       // Backspace
       if (typedChar === 'Backspace') {
@@ -134,7 +140,59 @@ const Test = ({ testStarted, setTestStarted, sound, settings, setTestResults, ti
           totalChar: successes + errors,
           time: time
         });
-        console.log('Score: ', score);
+
+        if (sessionStorage.getItem('loggedIn') === 'true') {
+          axios.post('http://localhost:3000/user/update', {
+            email: JSON.parse(sessionStorage.getItem('userData')).email,
+            stats: {
+              score: score,
+              cpm: cpm,
+              ppm: ppm,
+              accurate: accurate,
+              errors: errors,
+              totalChar: successes + errors,
+              time: time
+            },
+            test: {
+              type: settings.type,
+              numWords: settings.numWords,
+              difficulty: settings.difficulty,
+            }
+          }).then((response) => {
+            console.log('Estadísticas actualizadas:', response.data);
+          }).catch((error) => {
+            console.error('Error al actualizar las estadísticas:', error);
+          });
+
+
+          axios.post('http://localhost:3000/test/save', {
+            id: generateTestId(),
+            text: text,
+            player: JSON.parse(sessionStorage.getItem('userData')).username,
+            date: getDate(),
+            charResults: results,
+            settings: {
+              mode: settings.mode,
+              type: settings.type,
+              difficulty: settings.difficulty,
+              language: settings.language
+            },
+            results: {
+              score: score,
+              speed: cpm,
+              accuracy: accurate,
+              numErrors: errors,
+              numCharacters: successes + errors,
+              time: time
+            }
+
+          }).then((response) => {
+            console.log('Test guardado:', response.data);
+            setHasResultsSent(true);
+          }).catch((error) => {
+            console.error('Error al guardar el test:', error);
+          });
+        }
 
         return;
       }
@@ -151,7 +209,7 @@ const Test = ({ testStarted, setTestStarted, sound, settings, setTestResults, ti
         setTestStarted(false);
 
         if (successes + errors === 0 || seconds === 0) {
-          console.log('No hay errores ni correctos');
+          // console.log('No hay errores ni correctos');
           setTestResults({
             isReady: true,
             score: 0,
@@ -172,7 +230,6 @@ const Test = ({ testStarted, setTestStarted, sound, settings, setTestResults, ti
         const time = Math.round(seconds);
         const score = Math.round(Math.max(0, 100 * (0.2 * ppm / 100 + 0.6 * accurate / 100 - 0.2 * errors / (successes + errors))));
 
-
         setTestResults({
           isReady: true,
           score: score,
@@ -184,7 +241,58 @@ const Test = ({ testStarted, setTestStarted, sound, settings, setTestResults, ti
           time: time
         });
 
-        console.log('Score: ', score);
+        if (sessionStorage.getItem('loggedIn') === 'true') {
+          axios.post('http://localhost:3000/user/update', {
+            email: JSON.parse(sessionStorage.getItem('userData')).email,
+            stats: {
+              score: score,
+              cpm: cpm,
+              ppm: ppm,
+              accurate: accurate,
+              errors: errors,
+              totalChar: successes + errors,
+              time: time
+            },
+            test: {
+              type: settings.type,
+              numWords: settings.numWords,
+              difficulty: settings.difficulty,
+            }
+          }).then((response) => {
+            console.log('Estadísticas actualizadas:', response.data);
+          }).catch((error) => {
+            console.error('Error al actualizar las estadísticas:', error);
+          });
+
+
+          axios.post('http://localhost:3000/test/save', {
+            id: generateTestId(),
+            text: text,
+            player: JSON.parse(sessionStorage.getItem('userData')).username,
+            date: getDate(),
+            charResults: results,
+            settings: {
+              mode: settings.mode,
+              type: settings.type,
+              difficulty: settings.difficulty,
+              language: settings.language
+            },
+            results: {
+              score: score,
+              speed: cpm,
+              accuracy: accurate,
+              numErrors: errors,
+              numCharacters: successes + errors,
+              time: time
+            }
+
+          }).then((response) => {
+            console.log('Test guardado:', response.data);
+            setHasResultsSent(true);
+          }).catch((error) => {
+            console.error('Error al guardar el test:', error);
+          });
+        }
 
         return;
       }
@@ -214,6 +322,23 @@ const Test = ({ testStarted, setTestStarted, sound, settings, setTestResults, ti
       document.removeEventListener('keydown', handleKeyPress);
     };
   }, [cursor, text, successes, errors, seconds, testStarted]);
+
+  const generateTestId = () => {
+    return uuid();
+  }
+
+  const getDate = () => {
+    const date = new Date();
+
+    const day = String(date.getDate()).padStart(2, '0'); // Día con dos dígitos
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Mes con dos dígitos (getMonth es 0-indexado)
+    const year = date.getFullYear(); // Año con cuatro dígitos
+    const hours = String(date.getHours()).padStart(2, '0'); // Horas con dos dígitos
+    const minutes = String(date.getMinutes()).padStart(2, '0'); // Minutos con dos dígitos
+    const seconds = String(date.getSeconds()).padStart(2, '0'); // Segundos con dos dígitos
+
+    return `${day}/${month}/${year} - ${hours}:${minutes}:${seconds}`;
+  };
 
 
   // Renderizar el texto

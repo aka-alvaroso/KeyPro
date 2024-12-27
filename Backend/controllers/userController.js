@@ -1,5 +1,6 @@
 // /controllers/userController.js
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const User = require('../models/User');
 
@@ -11,12 +12,10 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Faltan campos obligatorios' });
     }
 
-    console.log(username, email, password);
-
     const newUser = new User({
       username,
       email,
-      password,
+      password: bcrypt.hashSync(password, 10),
     });
 
     const savedUser = await newUser.save();
@@ -34,18 +33,15 @@ const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+
     if (!email || !password) {
       return res.status(400).json({ message: 'Faltan campos obligatorios' });
     }
 
     const user = await User.findOne({ email });
 
-    if (!user) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
-    }
-
-    if (user.password !== password) {
-      return res.status(401).json({ message: 'Contraseña incorrecta' });
+    if (!user || !bcrypt.compareSync(password, user.password)) {
+      return res.status(401).json({ message: 'Credenciales incorrectas' });
     }
 
     const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -57,37 +53,60 @@ const loginUser = async (req, res) => {
   }
 };
 
-const editUser = async (req, res) => {
+const updateStats = async (req, res) => {
 
   try {
+    const { email, stats, test } = req.body;
 
-    const { username, email, password, stats } = req.body;
+    const user = await User.findOne({ email });
 
-    if (username) {
-      user.username = username;
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    if (email) {
-      user.email = email;
-    }
+    const newStats = {
+      avgAccuracy: Math.trunc(((user.stats.avgAccuracy * user.stats.totalTests + stats.accurate) / (user.stats.totalTests + 1)) * 10) / 10,
+      avgScore: Math.trunc(((user.stats.avgScore * user.stats.totalTests + stats.score) / (user.stats.totalTests + 1)) * 10) / 10,
+      avgSpeed: Math.trunc(((user.stats.avgSpeed * user.stats.totalTests + stats.cpm) / (user.stats.totalTests + 1)) * 10) / 10,
 
-    if (password) {
-      user.password = password;
-    }
+      bestScore: Math.max(user.stats.bestScore, stats.score),
+      bestSpeed: Math.max(user.stats.bestSpeed, stats.cpm),
+      numCharacters: user.stats.numCharacters + stats.totalChar,
+      numErrors: user.stats.numErrors + stats.errors,
+      numEasyTests: test.difficulty === 'easy' ? user.stats.numEasyTests + 1 : user.stats.numEasyTests,
+      numMediumTests: test.difficulty === 'medium' ? user.stats.numMediumTests + 1 : user.stats.numMediumTests,
+      numHardTests: test.difficulty === 'hard' ? user.stats.numHardTests + 1 : user.stats.numHardTests,
+      totalTests: user.stats.totalTests + 1
+    };
 
-    if (stats) {
-      user.stats = stats;
-    }
+    user.stats = newStats;
 
-    const updatedUser = await user.save();
+    await user.save();
 
-    res.json(updatedUser);
-
+    res.status(200).json({ message: 'Estadísticas actualizadas correctamente' });
   } catch (e) {
     console.error('Error al editar el usuario:', e);
     res.status(500).json({ message: 'Error al editar el usuario', e });
   }
 
+}
+
+const getUserData = async (req, res) => {
+  try {
+    const { username } = req.headers;
+
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    res.status(200).json({ user });
+
+  } catch (e) {
+    console.error('Error al obtener el usuario:', e);
+    res.status(500).json({ message: 'Error al obtener el usuario', e });
+  }
 }
 
 const deleteUser = async (req, res) => {
@@ -115,7 +134,8 @@ const deleteUser = async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
-  editUser,
+  updateStats,
+  getUserData,
   deleteUser
 };
 

@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const textRoutes = require('./routes/textRoutes');
 const userRoutes = require('./routes/userRoutes');
+const testRoutes = require('./routes/testRoutes');
 const connectDB = require('./config/db');
 const cors = require('cors');
 
@@ -17,6 +18,8 @@ app.use(express.json());
 app.use('/user', userRoutes);
 
 app.use('/text', textRoutes);
+
+app.use('/test', testRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

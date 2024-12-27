@@ -13,7 +13,7 @@ const textSchema = new Schema({
   },
   type: {
     type: String,
-    enum: ['normal', 'code', 'phrases'],
+    enum: ['normal', 'code'],
     required: true
   },
   language: { type: String, default: null },

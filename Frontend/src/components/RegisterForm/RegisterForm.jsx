@@ -27,7 +27,11 @@ const RegisterForm = () => {
         if (response.data) {
           sessionStorage.setItem('loggedIn', true);
           sessionStorage.setItem('token', response.data.token);
-          sessionStorage.setItem('userData', JSON.stringify(response.data.user));
+          sessionStorage.setItem('userData', JSON.stringify({
+            username: response.data.user.username,
+            email: response.data.user.email,
+            stats: response.data.user.stats,
+          }));
 
           navigate('/');
 

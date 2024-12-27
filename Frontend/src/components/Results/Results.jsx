@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRightArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRightArrowLeft, faCheck, faWarning } from '@fortawesome/free-solid-svg-icons';
 
 const Results = ({ results }) => {
   const { theme } = useTheme();
@@ -18,6 +18,24 @@ const Results = ({ results }) => {
 
   return (
     <>
+      {
+        sessionStorage.getItem('loggedIn') === 'true'
+          ?
+          <div className={`${results['isReady'] ? 'block' : 'hidden'} my-4 flex justify-between items-center  py-1 px-16 rounded-lg border-2 border-green-600`}>
+            <FontAwesomeIcon icon={faCheck} className='text-md font-bold text-green-600 mx-2' />
+            <p className='text-md font-bold text-green-600'>Resultados del test guardados correctamente</p>
+            <FontAwesomeIcon icon={faCheck} className='text-md font-bold text-green-600 mx-2' />
+          </div>
+          :
+          <div className={`${results['isReady'] ? 'block' : 'hidden'} my-4 flex justify-between items-center py-1 px-16 rounded-lg border-2 border-amber-600`}>
+            <FontAwesomeIcon icon={faWarning} className='text-md font-bold text-amber-600 mx-2' />
+            <p className='text-md font-bold text-amber-600'>Si deseas almacenar los resultados debes iniciar sesión</p>
+            <FontAwesomeIcon icon={faWarning} className='text-md font-bold text-amber-600 mx-2' />
+          </div>
+      }
+
+
+
       <p className={`${results['isReady'] ? 'block' : 'hidden'} font-bold text-3xl text-left w-4/6`}>Resultados</p>
       <div className={`${results['isReady'] ? 'block' : 'hidden'} mt-8 w-4/6 rounded-lg grid grid-cols-3 gap-2`}>
         <section className={`rounded-lg p-2 border-2 border-${theme}-primary`}>
