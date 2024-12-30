@@ -1,6 +1,5 @@
 import './index.css'
 import { useState } from 'react';
-import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Auth from './pages/Auth';
@@ -22,10 +21,6 @@ function App () {
   const [settingsModalIsOpen, setSettingsModalIsOpen] = useState(false);
 
 
-
-  const [sound, setSound] = useState(false)
-  const [themeModalIsOpen, setThemeModalIsOpen] = useState(false);
-  const [settingsModalIsOpen, setSettingsModalIsOpen] = useState(false);
 
   return (
     <Routes>

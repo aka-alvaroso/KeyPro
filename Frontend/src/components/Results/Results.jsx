@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRightArrowLeft, faCheck, faWarning } from '@fortawesome/free-solid-svg-icons';
-import { faArrowRightArrowLeft, faCheck, faWarning } from '@fortawesome/free-solid-svg-icons';
 
 const Results = ({ results }) => {
   const { theme } = useTheme();
