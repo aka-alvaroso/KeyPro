@@ -8,7 +8,6 @@ import Navbar from '../components/Navbar/Navbar'
 import GameSelector from '../components/GameSelector/GameSelector'
 import Test from '../components/Test/Test'
 import Results from '../components/Results/Results'
-import SettingsModal from '../components/SettingsModal/SettingsModal'
 import ThemeModal from '../components/ThemeModal/ThemeModal'
 import Timebar from '../components/Timebar/Timebar'
 
@@ -16,7 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRotateRight, faGear, faPenToSquare, faChartSimple, faEarthAmericas } from '@fortawesome/free-solid-svg-icons'
 
 
-const Home = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen, settingsModalIsOpen, setSettingsModalIsOpen }) => {
+const Home = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen }) => {
   const { theme, setTheme } = useTheme();
   const [testStarted, setTestStarted] = useState(false);
 
@@ -42,6 +41,11 @@ const Home = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen, settings
   })
 
   const [timeRemaining, setTimeRemaining] = useState(gameSettings.time);
+
+  const [areResultsSaved, setAreResultsSaved] = useState({
+    user: false,
+    test: false
+  });
 
   useEffect(() => {
     if (!testStarted || gameSettings.mode !== 'timed') {
@@ -78,7 +82,7 @@ const Home = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen, settings
     <div className={` bg-${theme}-background text-${theme}-text w-screen h-screen  flex flex-col items-center justify-evenly`}>
 
       {/* Navbar */}
-      <Navbar sound={sound} setSound={setSound} setThemeModalIsOpen={setThemeModalIsOpen} setSettingsModalIsOpen={setSettingsModalIsOpen} isProfilePage={false} />
+      <Navbar sound={sound} setSound={setSound} setThemeModalIsOpen={setThemeModalIsOpen} isProfilePage={false} />
 
       <main className='w-full max-w-7xl h-4/5 p-2 flex flex-col items-center justify-center'>
 
@@ -95,11 +99,11 @@ const Home = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen, settings
 
         {/* Test */}
         <div id="test-container" className={`${results['isReady'] ? 'hidden' : 'block'} w-4/5 text-3xl tracking-wider leading-9`}>
-          <Test testStarted={testStarted} setTestStarted={setTestStarted} sound={sound} settings={gameSettings} testResults={results} setTestResults={setResults} timeRemaining={timeRemaining} />
+          <Test testStarted={testStarted} setTestStarted={setTestStarted} sound={sound} settings={gameSettings} testResults={results} setTestResults={setResults} timeRemaining={timeRemaining} setAreResultsSaved={setAreResultsSaved} />
         </div>
 
         {/* Results */}
-        <Results results={results} gameSettings={gameSettings} />
+        <Results results={results} areResultsSaved={areResultsSaved} />
 
         {/* Game-Configs Resume */}
         <div className={`flex gap-2 mt-8`}>
@@ -152,7 +156,6 @@ const Home = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen, settings
 
       {/* Modales */}
       <ThemeModal isOpen={themeModalIsOpen} setIsOpen={setThemeModalIsOpen} theme={theme} setTheme={setTheme} />
-      <SettingsModal isOpen={settingsModalIsOpen} setIsOpen={setSettingsModalIsOpen} />
 
     </div >
   );
@@ -165,7 +168,5 @@ Home.propTypes = {
   sound: PropTypes.bool.isRequired,
   setSound: PropTypes.func.isRequired,
   themeModalIsOpen: PropTypes.bool.isRequired,
-  setThemeModalIsOpen: PropTypes.func.isRequired,
-  settingsModalIsOpen: PropTypes.bool.isRequired,
-  setSettingsModalIsOpen: PropTypes.func.isRequired,
+  setThemeModalIsOpen: PropTypes.func.isRequired
 }

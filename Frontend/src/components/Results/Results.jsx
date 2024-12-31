@@ -4,7 +4,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRightArrowLeft, faCheck, faWarning } from '@fortawesome/free-solid-svg-icons';
 
-const Results = ({ results }) => {
+const Results = ({ results, areResultsSaved }) => {
   const { theme } = useTheme();
   const [velocityType, setVelocityType] = useState('ppm')
 
@@ -19,7 +19,7 @@ const Results = ({ results }) => {
   return (
     <>
       {
-        sessionStorage.getItem('loggedIn') === 'true'
+        areResultsSaved['user'] && areResultsSaved['test']
           ?
           <div className={`${results['isReady'] ? 'block' : 'hidden'} my-4 flex justify-between items-center  py-1 px-16 rounded-lg border-2 border-green-600`}>
             <FontAwesomeIcon icon={faCheck} className='text-md font-bold text-green-600 mx-2' />
@@ -94,5 +94,5 @@ export default Results;
 
 Results.propTypes = {
   results: PropTypes.object,
-  gameSettings: PropTypes.object,
+  areResultsSaved: PropTypes.object
 };

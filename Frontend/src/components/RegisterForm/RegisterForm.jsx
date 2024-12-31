@@ -1,17 +1,18 @@
 
 import axios from '../../axiosConfig';
 
+import { useState } from 'react';
 import { useTheme } from "../../context/ThemeContext";
 import { useNavigate } from 'react-router-dom';
 
 const RegisterForm = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
-
+  const [error, setError] = useState(false);
 
   return (
 
-    <form className="space-y-4" onSubmit={async (e) => {
+    <form className="space-y-2" onSubmit={async (e) => {
       e.preventDefault();
       const username = document.getElementById('register-name').value;
       const email = document.getElementById('register-email').value;
@@ -37,7 +38,12 @@ const RegisterForm = () => {
 
         }
       } catch (error) {
-        console.error(error);
+        if (error.status === 400) {
+          setError(error.response.data.message);
+        } else {
+          setError('Error al registrar el usuario');
+        }
+
       }
     }}>
       <div className="space-y-2">
@@ -56,6 +62,7 @@ const RegisterForm = () => {
       <button className={`w-full h-12 bg-transparent border-2 border-${theme}-primary rounded-lg text-${theme}-primary font-bold text-lg mt-4 transition hover:bg-${theme}-primary hover:text-${theme}-background`}>
         Registrarme
       </button>
+      {error ? <p className="text-red-600">{error}</p> : ''}
     </form>
   )
 }

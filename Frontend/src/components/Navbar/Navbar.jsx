@@ -1,18 +1,21 @@
 // src/components/Navbar.jsx
 
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { useTheme } from '../../context/ThemeContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowRightToBracket, faBrush, faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
-import { faGear } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRightToBracket, faBrush, faChevronDown, faCrown, faUser } from '@fortawesome/free-solid-svg-icons'
 import { faVolumeHigh } from '@fortawesome/free-solid-svg-icons'
 import { faVolumeXmark } from '@fortawesome/free-solid-svg-icons'
 
 
-const Navbar = ({ sound, setSound, setSettingsModalIsOpen, setThemeModalIsOpen, isProfilePage }) => {
+const Navbar = ({ sound, setSound, setThemeModalIsOpen }) => {
+  const navigate = useNavigate();
   const { theme } = useTheme();
+
+  const [isSubMenuOpened, setIsSubMenuOpened] = useState(false);
 
   return (
     <nav className="navbar w-4/5 h-1/5 flex items-center p-16">
@@ -29,34 +32,48 @@ const Navbar = ({ sound, setSound, setSettingsModalIsOpen, setThemeModalIsOpen, 
         </button>
         <button
           className={`ml-4 text-xl text-${theme}-text border-none hover:text-${theme}-primary hover:cursor-pointer transition`}
-          onClick={() => setSettingsModalIsOpen(true)}>
-          <FontAwesomeIcon icon={faGear} />
+          onClick={() => navigate('/rankings')}>
+          <FontAwesomeIcon icon={faCrown} />
         </button>
       </div>
-      <div className='ml-auto'>
+      <div className='ml-auto flex'>
         <button onClick={() => setSound(!sound)}
           className={`ml-4 text-xl text-${theme}-text border-none hover:text-${theme}-primary hover:cursor-pointer transition`}>
           {sound ? <FontAwesomeIcon icon={faVolumeHigh} /> : <FontAwesomeIcon icon={faVolumeXmark} />}
         </button>
 
-        {isProfilePage ?
-          <Link to="/">
-            <button className={`bg-red-950 border-2 border-red-600 text-red-600 py-2 px-4 rounded-lg ml-4`}
-              onClick={() => {
-                sessionStorage.removeItem('userData');
-                sessionStorage.removeItem('token');
-                sessionStorage.setItem('loggedIn', false);
-              }}>
-              <p><FontAwesomeIcon icon={faRightFromBracket} /> Cerrar sesión </p>
-            </button>
-          </Link>
-          :
+        {
           sessionStorage.getItem('loggedIn') === 'true' ?
-            <Link to={`/profile/${JSON.parse(sessionStorage.getItem('userData')).username}`} >
-              <button className={`ml-4 bg-${theme}-primary bg-opacity-20 py-2 px-4 rounded-md text-md font-bold text-${theme}-primary hover:bg-opacity-75 hover:text-${theme}-background transition`}>
-                <FontAwesomeIcon icon={faArrowRightToBracket} /> Perfil
-              </button>
-            </Link>
+
+            <button
+              onClick={() => setIsSubMenuOpened(!isSubMenuOpened)}
+              className={`ml-4 flex items-center bg-${theme}-primary bg-opacity-20 py-2 px-4 rounded-md text-md font-bold text-${theme}-primary hover:bg-opacity-75 hover:text-${theme}-background transition`}>
+              <img src="https://t4.ftcdn.net/jpg/03/49/49/79/360_F_349497933_Ly4im8BDmHLaLzgyKg2f2yZOvJjBtlw5.webp" className='w-8 h-auto rounded-full' alt='profile' />
+              <span className='ml-2'>
+                {JSON.parse(sessionStorage.getItem('userData')).username}
+                {isSubMenuOpened
+                  ? <FontAwesomeIcon icon={faChevronDown} className='rotate-0 transition ml-2' />
+                  : <FontAwesomeIcon icon={faChevronDown} className='-rotate-90 transition ml-2' />
+                }
+              </span>
+
+
+              <div className={`${isSubMenuOpened ? 'block' : 'hidden'} absolute top-32 right-64 bg-${theme}-primary bg-opacity-20 text-${theme}-primary text-left rounded-md shadow-md p-4`}>
+                <Link to={`/profile/${JSON.parse(sessionStorage.getItem('userData')).username}`} >
+                  <p className={`py-1 px-2 rounded hover:bg-${theme}-primary hover:text-${theme}-text transition`}><FontAwesomeIcon icon={faUser} /> Mi perfil</p>
+                </Link>
+                <p
+                  onClick={() => {
+                    sessionStorage.setItem('loggedIn', 'false');
+                    sessionStorage.removeItem('userData');
+                    sessionStorage.removeItem('token');
+                    navigate('/');
+                  }}
+                  className={`py-1 px-2 rounded hover:bg-${theme}-primary hover:text-${theme}-text transition`}><FontAwesomeIcon icon={faArrowRightToBracket} /> Cerrar sesión</p>
+
+              </div>
+            </button>
+
             :
             <Link to="/auth">
               <button className={`ml-4 bg-${theme}-primary bg-opacity-20 py-2 px-4 rounded-md text-md font-bold text-${theme}-primary hover:bg-opacity-75 hover:text-${theme}-background transition`}>
@@ -64,8 +81,6 @@ const Navbar = ({ sound, setSound, setSettingsModalIsOpen, setThemeModalIsOpen, 
               </button>
             </Link>
         }
-
-
 
 
       </div>
@@ -79,6 +94,5 @@ Navbar.propTypes = {
   sound: PropTypes.bool,
   setSound: PropTypes.func,
   setSettingsModalIsOpen: PropTypes.func,
-  setThemeModalIsOpen: PropTypes.func,
-  isProfilePage: PropTypes.bool
+  setThemeModalIsOpen: PropTypes.func
 }

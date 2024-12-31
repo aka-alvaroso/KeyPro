@@ -9,11 +9,10 @@ import { useParams, Link } from 'react-router-dom';
 
 import Navbar from '../components/Navbar/Navbar'
 import ThemeModal from '../components/ThemeModal/ThemeModal'
-import SettingsModal from '../components/SettingsModal/SettingsModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRightArrowLeft, faList } from '@fortawesome/free-solid-svg-icons'
 
-const Profile = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen, settingsModalIsOpen, setSettingsModalIsOpen }) => {
+const Profile = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen }) => {
   const { username } = useParams();
 
   const { theme, setTheme } = useTheme();
@@ -68,13 +67,13 @@ const Profile = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen, setti
     <div className={` bg-${theme}-background text-${theme}-text w-screen h-screen flex flex-col items-center gap-4`}>
 
       {/* Navbar */}
-      <Navbar sound={sound} setSound={setSound} setThemeModalIsOpen={setThemeModalIsOpen} setSettingsModalIsOpen={setSettingsModalIsOpen} isProfilePage={true} />
+      <Navbar sound={sound} setSound={setSound} setThemeModalIsOpen={setThemeModalIsOpen} />
 
       <section className="w-4/5 flex items-center justify-center gap-4">
         <div className={`w-2/5 h-60 flex flex-col items-center justify-center bg-${theme}-primary bg-opacity-5 p-4 rounded-lg`}>
           <img className='w-28 h-28 rounded-full' src="https://t4.ftcdn.net/jpg/03/49/49/79/360_F_349497933_Ly4im8BDmHLaLzgyKg2f2yZOvJjBtlw5.webp" alt="Profile image" />
           <h2 className='text-2xl font-bold mt-4'>{userData.username}</h2>
-          <p className={`text-lg text-${theme}-primary opacity-70`}>(ToDo) #raking - Global</p>
+          {/* <p className={`text-lg text-${theme}-primary opacity-70`}>(ToDo) #raking - Global</p> */}
         </div>
         <div className={`w-3/5 h-60 flex items-center justify-center bg-${theme}-primary bg-opacity-5 p-4 rounded-lg gap-4`}>
           <div className={`w-1/3 rounded-lg p-2 border-2 border-${theme}-primary`}>
@@ -165,7 +164,7 @@ const Profile = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen, setti
 
       </section>
 
-      <Link to={`/history/${JSON.parse(sessionStorage.getItem('userData')).username}`} >
+      <Link to={`/history/${username}`} >
         <button className={`bg-${theme}-primary bg-opacity-20 py-2 px-4 rounded-md text-md font-bold text-${theme}-primary hover:bg-opacity-75 hover:text-${theme}-background transition`}>
           <FontAwesomeIcon icon={faList} /> Historial
         </button>
@@ -175,7 +174,6 @@ const Profile = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen, setti
 
       {/* Modales */}
       <ThemeModal isOpen={themeModalIsOpen} setIsOpen={setThemeModalIsOpen} theme={theme} setTheme={setTheme} />
-      <SettingsModal isOpen={settingsModalIsOpen} setIsOpen={setSettingsModalIsOpen} />
     </div>
 
 
@@ -188,7 +186,5 @@ Profile.propTypes = {
   sound: PropTypes.bool.isRequired,
   setSound: PropTypes.func.isRequired,
   themeModalIsOpen: PropTypes.bool.isRequired,
-  setThemeModalIsOpen: PropTypes.func.isRequired,
-  settingsModalIsOpen: PropTypes.bool.isRequired,
-  setSettingsModalIsOpen: PropTypes.func.isRequired
+  setThemeModalIsOpen: PropTypes.func.isRequired
 }

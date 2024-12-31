@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { v4 as uuid } from 'uuid';
 
-const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTestResults, timeRemaining }) => {
+const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTestResults, timeRemaining, setAreResultsSaved }) => {
   const { theme } = useTheme();
 
   const [text, setText] = useState('');
@@ -65,7 +65,7 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
         setTestStarted(true);
       }
 
-      console.log('Tecla presionada:', typedChar);
+      // console.log('Tecla presionada:', typedChar);
 
       // Reiniciar
       if (typedChar === 'Escape' || (typedChar === 'F5' && testResults.isReady) || (typedChar === 'r' && event.ctrlKey && testResults.isReady)) {
@@ -86,6 +86,10 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
           time: 0
         });
 
+        setAreResultsSaved({
+          user: false,
+          test: false
+        });
         fetchText();
         return;
       }
@@ -160,8 +164,16 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
             }
           }).then((response) => {
             console.log('Estadísticas actualizadas:', response.data);
+            setAreResultsSaved(prevState => ({
+              ...prevState,
+              user: true,
+            }));
           }).catch((error) => {
             console.error('Error al actualizar las estadísticas:', error);
+            setAreResultsSaved(prevState => ({
+              ...prevState,
+              user: false,
+            }));
           });
 
 
@@ -189,9 +201,19 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
           }).then((response) => {
             console.log('Test guardado:', response.data);
             setHasResultsSent(true);
+            setAreResultsSaved(prevState => ({
+              ...prevState,
+              test: true,
+            }));
           }).catch((error) => {
             console.error('Error al guardar el test:', error);
+            setAreResultsSaved(prevState => ({
+              ...prevState,
+              test: false,
+            }));
           });
+
+          setAreResultsSaved(true);
         }
 
         return;
@@ -260,8 +282,16 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
             }
           }).then((response) => {
             console.log('Estadísticas actualizadas:', response.data);
+            setAreResultsSaved(prevState => ({
+              ...prevState,
+              user: true,
+            }));
           }).catch((error) => {
             console.error('Error al actualizar las estadísticas:', error);
+            setAreResultsSaved(prevState => ({
+              ...prevState,
+              user: false,
+            }));
           });
 
 
@@ -289,9 +319,18 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
           }).then((response) => {
             console.log('Test guardado:', response.data);
             setHasResultsSent(true);
+            setAreResultsSaved(prevState => ({
+              ...prevState,
+              test: true,
+            }));
           }).catch((error) => {
             console.error('Error al guardar el test:', error);
+            setAreResultsSaved(prevState => ({
+              ...prevState,
+              test: false,
+            }));
           });
+
         }
 
         return;

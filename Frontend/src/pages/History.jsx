@@ -9,9 +9,10 @@ import { useParams, Link } from 'react-router-dom';
 
 import Navbar from '../components/Navbar/Navbar'
 import ThemeModal from '../components/ThemeModal/ThemeModal'
-import SettingsModal from '../components/SettingsModal/SettingsModal'
+import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const History = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen, settingsModalIsOpen, setSettingsModalIsOpen }) => {
+const History = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen }) => {
   const { username } = useParams();
 
   const { theme, setTheme } = useTheme();
@@ -45,10 +46,15 @@ const History = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen, setti
     <div className={`h-screen bg-${theme}-background text-${theme}-text w-screen flex flex-col items-center gap-4`}>
 
       {/* Navbar */}
-      <Navbar sound={sound} setSound={setSound} setThemeModalIsOpen={setThemeModalIsOpen} setSettingsModalIsOpen={setSettingsModalIsOpen} isProfilePage={true} />
+      <Navbar sound={sound} setSound={setSound} setThemeModalIsOpen={setThemeModalIsOpen} />
 
 
-      <h1 className={`text-xl text-${theme}-text`}>Historial de tests de <span className={`text-${theme}-primary`}>{username}</span></h1>
+      <h1 className={`text-xl text-${theme}-text h-16`}>Historial de tests de
+        <Link to={`/profile/${username}`}
+          className={`text-${theme}-primary ml-2 hover:bg-${theme}-primary hover:bg-opacity-10 rounded-lg py-1 px-2`}>
+          {username} <FontAwesomeIcon className='text-base' icon={faArrowUpRightFromSquare} />
+        </Link>
+      </h1>
 
       {history.length > 0 ?
         // <section className={`w-3/5 flex flex-wrap items-center justify-center bg-${theme}-primary bg-opacity-5 p-4 rounded-lg gap-4 mb-28`}>
@@ -91,7 +97,6 @@ const History = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen, setti
 
       {/* Modales */}
       <ThemeModal isOpen={themeModalIsOpen} setIsOpen={setThemeModalIsOpen} theme={theme} setTheme={setTheme} />
-      <SettingsModal isOpen={settingsModalIsOpen} setIsOpen={setSettingsModalIsOpen} />
     </div>
 
 
@@ -104,7 +109,5 @@ History.propTypes = {
   sound: PropTypes.bool.isRequired,
   setSound: PropTypes.func.isRequired,
   themeModalIsOpen: PropTypes.bool.isRequired,
-  setThemeModalIsOpen: PropTypes.func.isRequired,
-  settingsModalIsOpen: PropTypes.bool.isRequired,
-  setSettingsModalIsOpen: PropTypes.func.isRequired
+  setThemeModalIsOpen: PropTypes.func.isRequired
 }

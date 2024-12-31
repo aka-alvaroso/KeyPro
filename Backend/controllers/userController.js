@@ -12,6 +12,18 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Faltan campos obligatorios' });
     }
 
+    let userExists = await User.findOne({ email });
+
+    if (userExists) {
+      return res.status(400).json({ message: 'El usuario ya existe' });
+    }
+
+    userExists = await User.findOne({ username });
+
+    if (userExists) {
+      return res.status(400).json({ message: 'El usuario ya existe' });
+    }
+
     const newUser = new User({
       username,
       email,

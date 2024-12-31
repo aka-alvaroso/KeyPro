@@ -4,14 +4,15 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 
 import Navbar from '../components/Navbar/Navbar'
 import ThemeModal from '../components/ThemeModal/ThemeModal'
-import SettingsModal from '../components/SettingsModal/SettingsModal'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 
-const TestPreview = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen, settingsModalIsOpen, setSettingsModalIsOpen }) => {
+const TestPreview = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen }) => {
   const { id } = useParams();
 
   const { theme, setTheme } = useTheme();
@@ -60,7 +61,7 @@ const TestPreview = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen, s
     <div className={` bg-${theme}-background text-${theme}-text w-screen h-screen flex flex-col items-center gap-4`}>
 
       {/* Navbar */}
-      <Navbar sound={sound} setSound={setSound} setThemeModalIsOpen={setThemeModalIsOpen} setSettingsModalIsOpen={setSettingsModalIsOpen} isProfilePage={true} />
+      <Navbar sound={sound} setSound={setSound} setThemeModalIsOpen={setThemeModalIsOpen} />
 
       {test != null || test != undefined ?
 
@@ -132,7 +133,12 @@ const TestPreview = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen, s
               */}
               <div className={`w-full mt-1 flex gap-2 items-center`}>
                 <p className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-70 py-1 px-2 rounded`}>Jugador</p>
-                <p className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-20 py-1 px-2 rounded`}>{test.player}</p>
+                <Link
+                  to={`/profile/${test.player}`}
+                  className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-20 py-1 px-2 rounded hover:text-${theme}-primary transition`}>
+                  {test.player}
+                  <FontAwesomeIcon className='text-xs ml-2' icon={faArrowUpRightFromSquare} />
+                </Link>
               </div>
 
               <div className={`w-full mt-1 flex gap-2 items-center`}>
@@ -172,7 +178,6 @@ const TestPreview = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen, s
 
       {/* Modales */}
       <ThemeModal isOpen={themeModalIsOpen} setIsOpen={setThemeModalIsOpen} theme={theme} setTheme={setTheme} />
-      <SettingsModal isOpen={settingsModalIsOpen} setIsOpen={setSettingsModalIsOpen} />
     </div>
 
 
@@ -185,7 +190,5 @@ TestPreview.propTypes = {
   sound: PropTypes.bool.isRequired,
   setSound: PropTypes.func.isRequired,
   themeModalIsOpen: PropTypes.bool.isRequired,
-  setThemeModalIsOpen: PropTypes.func.isRequired,
-  settingsModalIsOpen: PropTypes.bool.isRequired,
-  setSettingsModalIsOpen: PropTypes.func.isRequired
+  setThemeModalIsOpen: PropTypes.func.isRequired
 }
