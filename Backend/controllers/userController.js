@@ -121,6 +121,29 @@ const getUserData = async (req, res) => {
   }
 }
 
+const updateUserData = async (req, res) => {
+  try {
+
+    const { username, imageURL } = req.body;
+
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    user.imageURL = imageURL;
+
+    await user.save();
+
+    res.status(200).json({ message: 'Imagen actualizada correctamente' });
+
+  } catch (e) {
+    console.error('Error al editar el usuario:', e);
+    res.status(500).json({ message: 'Error al editar el usuario', e });
+  }
+}
+
 const deleteUser = async (req, res) => {
   try {
     const { email } = req.body;
@@ -148,6 +171,7 @@ module.exports = {
   loginUser,
   updateStats,
   getUserData,
+  updateUserData,
   deleteUser
 };
 

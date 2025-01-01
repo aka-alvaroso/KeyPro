@@ -9,13 +9,15 @@ import { useParams, Link } from 'react-router-dom';
 
 import Navbar from '../components/Navbar/Navbar'
 import ThemeModal from '../components/ThemeModal/ThemeModal'
+import EditProfileModal from '../components/EditProfileModal/EditProfileModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowRightArrowLeft, faList } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRightArrowLeft, faEdit, faList } from '@fortawesome/free-solid-svg-icons'
 
 const Profile = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen }) => {
   const { username } = useParams();
 
-  const { theme, setTheme } = useTheme();
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const { theme } = useTheme();
   const [velocityType, setVelocityType] = useState('ppm')
   const [userData, setUserData] = useState({
     username: '',
@@ -30,7 +32,8 @@ const Profile = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen }) => 
       numErrors: 0,
       numHardTests: 0,
       numMediumTests: 0,
-      totalTests: 0
+      totalTests: 0,
+      imageURL: 'https://t4.ftcdn.net/jpg/03/49/49/79/360_F_349497933_Ly4im8BDmHLaLzgyKg2f2yZOvJjBtlw5.webp'
     }
   })
 
@@ -71,7 +74,11 @@ const Profile = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen }) => 
 
       <section className="w-4/5 flex items-center justify-center gap-4">
         <div className={`w-2/5 h-60 flex flex-col items-center justify-center bg-${theme}-primary bg-opacity-5 p-4 rounded-lg`}>
-          <img className='w-28 h-28 rounded-full' src="https://t4.ftcdn.net/jpg/03/49/49/79/360_F_349497933_Ly4im8BDmHLaLzgyKg2f2yZOvJjBtlw5.webp" alt="Profile image" />
+          <img
+            className='w-28 h-28 rounded-full object-cover'
+            src={userData.imageURL}
+            alt="Profile image"
+          />
           <h2 className='text-2xl font-bold mt-4'>{userData.username}</h2>
           {/* <p className={`text-lg text-${theme}-primary opacity-70`}>(ToDo) #raking - Global</p> */}
         </div>
@@ -164,16 +171,27 @@ const Profile = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen }) => 
 
       </section>
 
-      <Link to={`/history/${username}`} >
-        <button className={`bg-${theme}-primary bg-opacity-20 py-2 px-4 rounded-md text-md font-bold text-${theme}-primary hover:bg-opacity-75 hover:text-${theme}-background transition`}>
-          <FontAwesomeIcon icon={faList} /> Historial
-        </button>
-      </Link>
+      <div className='flex gap-4'>
+        {userData.username === JSON.parse(sessionStorage.getItem('userData')).username
+          ? <button
+            onClick={() => setIsProfileModalOpen(true)}
+            className={`bg-${theme}-primary bg-opacity-20 py-2 px-4 rounded-md text-md font-bold text-${theme}-primary hover:bg-opacity-75 hover:text-${theme}-background transition`}>
+            <FontAwesomeIcon icon={faEdit} /> Editar perfil
+          </button>
+          : ''
+        }
+        <Link to={`/history/${username}`} >
+          <button className={`bg-${theme}-primary bg-opacity-20 py-2 px-4 rounded-md text-md font-bold text-${theme}-primary hover:bg-opacity-75 hover:text-${theme}-background transition`}>
+            <FontAwesomeIcon icon={faList} /> Historial
+          </button>
+        </Link>
+      </div>
 
 
 
       {/* Modales */}
-      <ThemeModal isOpen={themeModalIsOpen} setIsOpen={setThemeModalIsOpen} theme={theme} setTheme={setTheme} />
+      <ThemeModal isOpen={themeModalIsOpen} setIsOpen={setThemeModalIsOpen} />
+      <EditProfileModal isOpen={isProfileModalOpen} setIsOpen={setIsProfileModalOpen} userData={userData} setUserData={setUserData} />
     </div>
 
 

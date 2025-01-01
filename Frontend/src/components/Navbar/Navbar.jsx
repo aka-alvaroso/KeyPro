@@ -1,7 +1,8 @@
 // src/components/Navbar.jsx
 
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -16,6 +17,53 @@ const Navbar = ({ sound, setSound, setThemeModalIsOpen }) => {
   const { theme } = useTheme();
 
   const [isSubMenuOpened, setIsSubMenuOpened] = useState(false);
+
+  const [userData, setUserData] = useState({
+    username: '',
+    stats: {
+      avgAccuracy: 0,
+      avgScore: 0,
+      avgSpeed: 0,
+      bestScore: 0,
+      bestSpeed: 0,
+      numCharacters: 0,
+      numEasyTests: 0,
+      numErrors: 0,
+      numHardTests: 0,
+      numMediumTests: 0,
+      totalTests: 0,
+      imageURL: 'https://t4.ftcdn.net/jpg/03/49/49/79/360_F_349497933_Ly4im8BDmHLaLzgyKg2f2yZOvJjBtlw5.webp'
+    }
+  })
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        if (sessionStorage.getItem('loggedIn') === 'true') {
+
+          const response = await axios.get('http://localhost:3000/user/data', {
+            headers: {
+              username: JSON.parse(sessionStorage.getItem('userData')).username
+              // username: sessionStorage.getItem('userData').username
+            }
+          });
+
+          if (response.status !== 200) {
+            console.error('Error al obtener el usuario:', response);
+            return
+          }
+
+          setUserData(response.data.user);
+        }
+
+      } catch (e) {
+        console.error('Error al obtener el usuario:', e);
+      }
+    }
+    fetchUser();
+
+
+  });
 
   return (
     <nav className="navbar w-4/5 h-1/5 flex items-center p-16">
@@ -48,7 +96,7 @@ const Navbar = ({ sound, setSound, setThemeModalIsOpen }) => {
             <button
               onClick={() => setIsSubMenuOpened(!isSubMenuOpened)}
               className={`ml-4 flex items-center bg-${theme}-primary bg-opacity-20 py-2 px-4 rounded-md text-md font-bold text-${theme}-primary hover:bg-opacity-75 hover:text-${theme}-background transition`}>
-              <img src="https://t4.ftcdn.net/jpg/03/49/49/79/360_F_349497933_Ly4im8BDmHLaLzgyKg2f2yZOvJjBtlw5.webp" className='w-8 h-auto rounded-full' alt='profile' />
+              <img src={userData.imageURL} className='w-8 h-8 rounded-full object-cover' alt='profile' />
               <span className='ml-2'>
                 {JSON.parse(sessionStorage.getItem('userData')).username}
                 {isSubMenuOpened
