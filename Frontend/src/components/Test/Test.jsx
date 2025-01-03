@@ -7,13 +7,16 @@ import { v4 as uuid } from 'uuid';
 const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTestResults, timeRemaining, setAreResultsSaved }) => {
   const { theme } = useTheme();
 
-  const [text, setText] = useState('');
-  const [cursor, setCursor] = useState(0)
-  const [results, setResults] = useState([])
+  const [timedText, setTimedText] = useState([]);
+  const [timedResults, setTimedResults] = useState([]);
 
-  const [seconds, setSeconds] = useState(0)
-  const [successes, setSuccesses] = useState(0)
-  const [errors, setErrors] = useState(0)
+  const [text, setText] = useState('');
+  const [cursor, setCursor] = useState(0);
+  const [results, setResults] = useState([]);
+
+  const [seconds, setSeconds] = useState(0);
+  const [successes, setSuccesses] = useState(0);
+  const [errors, setErrors] = useState(0);
 
   const [hasResultsSent, setHasResultsSent] = useState(false);
 
@@ -23,7 +26,7 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
   }, [settings]);
 
   const fetchText = async () => {
-    const response = await axios.get('http://localhost:3000/text/get', {
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}/text/get`, {
       params: {
         type: settings.type,
         numWords: settings.numWords,
@@ -58,6 +61,7 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
   useEffect(() => {
 
     const handleKeyPress = (event) => {
+
       const currentChar = text[cursor];
       const typedChar = event.key;
 
@@ -69,6 +73,8 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
 
       // Reiniciar
       if (typedChar === 'Escape' || (typedChar === 'F5' && testResults.isReady) || (typedChar === 'r' && event.ctrlKey && testResults.isReady)) {
+        setTimedText([])
+        setTimedResults([])
         setCursor(0)
         setResults([])
         setTestStarted(false)
@@ -97,6 +103,7 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
       if (hasResultsSent) {
         return;
       }
+
 
       // Backspace
       if (typedChar === 'Backspace') {
@@ -145,8 +152,8 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
           time: time
         });
 
-        if (sessionStorage.getItem('loggedIn') === 'true') {
-          axios.post('http://localhost:3000/user/update', {
+        if (sessionStorage.getItem('loggedIn') === 'true' && !hasResultsSent) {
+          axios.post(`${import.meta.env.VITE_API_URL}/user/update`, {
             email: JSON.parse(sessionStorage.getItem('userData')).email,
             stats: {
               score: score,
@@ -162,14 +169,12 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
               numWords: settings.numWords,
               difficulty: settings.difficulty,
             }
-          }).then((response) => {
-            console.log('Estadísticas actualizadas:', response.data);
+          }).then(() => {
             setAreResultsSaved(prevState => ({
               ...prevState,
               user: true,
             }));
-          }).catch((error) => {
-            console.error('Error al actualizar las estadísticas:', error);
+          }).catch(() => {
             setAreResultsSaved(prevState => ({
               ...prevState,
               user: false,
@@ -177,12 +182,12 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
           });
 
 
-          axios.post('http://localhost:3000/test/save', {
+          axios.post(`${import.meta.env.VITE_API_URL}/test/save`, {
             id: generateTestId(),
-            text: text,
+            text: timedText.join(''),
             player: JSON.parse(sessionStorage.getItem('userData')).username,
             date: getDate(),
-            charResults: results,
+            charResults: timedResults,
             settings: {
               mode: settings.mode,
               type: settings.type,
@@ -198,26 +203,27 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
               time: time
             }
 
-          }).then((response) => {
-            console.log('Test guardado:', response.data);
+          }).then(() => {
             setHasResultsSent(true);
             setAreResultsSaved(prevState => ({
               ...prevState,
               test: true,
             }));
-          }).catch((error) => {
-            console.error('Error al guardar el test:', error);
+          }).catch(() => {
             setAreResultsSaved(prevState => ({
               ...prevState,
               test: false,
             }));
           });
-
-          setAreResultsSaved(true);
         }
 
         return;
       }
+
+
+      let isCorrect = typedChar === currentChar;
+      setTimedText(prevList => [...prevList, currentChar]);
+      setTimedResults(prevResults => [...prevResults, isCorrect ? 'correct' : 'incorrect']);
 
       if (cursor === text.length - 1) {
 
@@ -263,8 +269,8 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
           time: time
         });
 
-        if (sessionStorage.getItem('loggedIn') === 'true') {
-          axios.post('http://localhost:3000/user/update', {
+        if (sessionStorage.getItem('loggedIn') === 'true' && !hasResultsSent) {
+          axios.post(`${import.meta.env.VITE_API_URL}/user/update`, {
             email: JSON.parse(sessionStorage.getItem('userData')).email,
             stats: {
               score: score,
@@ -280,14 +286,12 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
               numWords: settings.numWords,
               difficulty: settings.difficulty,
             }
-          }).then((response) => {
-            console.log('Estadísticas actualizadas:', response.data);
+          }).then(() => {
             setAreResultsSaved(prevState => ({
               ...prevState,
               user: true,
             }));
-          }).catch((error) => {
-            console.error('Error al actualizar las estadísticas:', error);
+          }).catch(() => {
             setAreResultsSaved(prevState => ({
               ...prevState,
               user: false,
@@ -295,7 +299,7 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
           });
 
 
-          axios.post('http://localhost:3000/test/save', {
+          axios.post(`${import.meta.env.VITE_API_URL}/test/save`, {
             id: generateTestId(),
             text: text,
             player: JSON.parse(sessionStorage.getItem('userData')).username,
@@ -316,15 +320,13 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
               time: time
             }
 
-          }).then((response) => {
-            console.log('Test guardado:', response.data);
+          }).then(() => {
             setHasResultsSent(true);
             setAreResultsSaved(prevState => ({
               ...prevState,
               test: true,
             }));
-          }).catch((error) => {
-            console.error('Error al guardar el test:', error);
+          }).catch(() => {
             setAreResultsSaved(prevState => ({
               ...prevState,
               test: false,
@@ -342,7 +344,6 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
         audio.play();
       }
 
-      const isCorrect = typedChar === currentChar;
 
       isCorrect ? setSuccesses(successes + 1) : setErrors(errors + 1)
 
@@ -360,7 +361,7 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
     return () => {
       document.removeEventListener('keydown', handleKeyPress);
     };
-  }, [cursor, text, successes, errors, seconds, testStarted]);
+  }, [cursor, text, successes, errors, seconds, testStarted, hasResultsSent]);
 
   const generateTestId = () => {
     return uuid();

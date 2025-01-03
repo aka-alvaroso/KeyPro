@@ -25,7 +25,7 @@ const Rankings = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen }) =>
     const fetchHistory = async () => {
 
       try {
-        const response = await axios.get(`http://localhost:3000/ranking/${orderBy}`);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/ranking/${orderBy}`);
 
 
         if (response.status !== 200) {

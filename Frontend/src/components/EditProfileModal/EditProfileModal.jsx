@@ -57,7 +57,7 @@ const EditProfileModal = ({ isOpen, setIsOpen, userData, setUserData }) => {
                 const newImageURL = document.querySelector('input').value;
                 setUserData(prevState => ({ ...prevState, imageURL: newImageURL }))
                 try {
-                  const response = await axios.put('http://localhost:3000/user/data', {
+                  const response = await axios.put(`${import.meta.env.VITE_API_URL}/user/data`, {
                     username: userData.username,
                     imageURL: newImageURL
                   });

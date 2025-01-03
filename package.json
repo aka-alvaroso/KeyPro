@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "scripts": {
+    "start": "concurrently \"cd Frontend && npm run dev\" \"cd Backend && npm start\" --names \"Frontend,Backend\" --prefix-colors \"bgBlue,bgGreen\"",
+    "install": "npm install --prefix Frontend && npm install --prefix Backend"
+  }
+}

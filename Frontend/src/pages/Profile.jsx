@@ -42,7 +42,7 @@ const Profile = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen }) => 
 
     const fetchUser = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/user/data', {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/user/data`, {
           headers: {
             // email: JSON.parse(sessionStorage.getItem('userData')).email
             username
@@ -172,7 +172,7 @@ const Profile = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen }) => 
       </section>
 
       <div className='flex gap-4'>
-        {userData.username === JSON.parse(sessionStorage.getItem('userData')).username
+        {sessionStorage.getItem('loggedIn') === 'true' && userData.username === JSON.parse(sessionStorage.getItem('userData')).username
           ? <button
             onClick={() => setIsProfileModalOpen(true)}
             className={`bg-${theme}-primary bg-opacity-20 py-2 px-4 rounded-md text-md font-bold text-${theme}-primary hover:bg-opacity-75 hover:text-${theme}-background transition`}>

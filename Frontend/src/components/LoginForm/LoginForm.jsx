@@ -18,7 +18,7 @@ const LoginForm = () => {
       const password = document.getElementById('login-password').value;
 
       try {
-        const response = await axios.post('http://localhost:3000/user/login', {
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/user/login`, {
           email,
           password,
         });

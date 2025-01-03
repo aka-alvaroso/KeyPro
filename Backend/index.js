@@ -11,7 +11,13 @@ const cors = require('cors');
 // Conexión a MongoDB
 connectDB();
 
-app.use(cors());
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'username'],
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
@@ -26,7 +32,7 @@ app.use('/ranking', rankingRoutes);
 
 
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

@@ -24,7 +24,7 @@ const TestPreview = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen })
     const fetchHistory = async () => {
 
       try {
-        const response = await axios.get('http://localhost:3000/test/get/' + id);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/test/get/` + id);
 
         if (response.status !== 200) {
           console.error('Error al obtener el test:', response);
@@ -148,22 +148,31 @@ const TestPreview = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen })
 
               <div className={`w-full mt-1 flex gap-2 items-center`}>
                 <p className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-70 py-1 px-2 rounded`}>Modo</p>
-                <p className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-20 py-1 px-2 rounded`}>{test.settings.mode}</p>
+                <p className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-20 py-1 px-2 rounded`}>{test.settings.mode === 'practice' ? 'Práctica' : test.settings.mode === 'timed' ? 'Cronómetro' : 'Competitivo'}</p>
               </div>
 
               <div className={`w-full mt-1 flex gap-2 items-center`}>
                 <p className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-70 py-1 px-2 rounded`}>Tipo</p>
-                <p className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-20 py-1 px-2 rounded`}>{test.settings.type}</p>
+                <p className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-20 py-1 px-2 rounded`}>{test.settings.type === 'text' ? 'Texto' : 'Código'}</p>
               </div>
 
               <div className={`w-full mt-1 flex gap-2 items-center`}>
                 <p className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-70 py-1 px-2 rounded`}>Dificultad</p>
-                <p className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-20 py-1 px-2 rounded`}>{test.settings.difficulty}</p>
+                <p className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-20 py-1 px-2 rounded`}>{test.settings.difficulty === 'easy' ? 'Fácil' : test.settings.difficulty === 'medium' ? 'Medio' : 'Difícil'}</p>
               </div>
 
               <div className={`w-full mt-1 flex gap-2 items-center`}>
                 <p className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-70 py-1 px-2 rounded`}>Lenguaje</p>
-                <p className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-20 py-1 px-2 rounded`}>{test.settings.language}</p>
+                <p className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-20 py-1 px-2 rounded`}>{
+                  test.settings.language === 'es' ? 'Español'
+                    : test.settings.language === 'en' ? 'English'
+                      : test.settings.language === 'python' ? 'Python'
+                        : test.settings.language === 'javascript' ? 'JavaScript'
+                          : test.settings.language === 'c++' ? 'C++'
+                            : test.settings.language === 'html' ? 'HTML'
+                              : test.settings.language === 'java' ? 'Java'
+                                : 'Error'
+                }</p>
               </div>
 
             </div>

@@ -24,7 +24,7 @@ const History = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen }) => 
     const fetchHistory = async () => {
 
       try {
-        const response = await axios.get('http://localhost:3000/test/user/' + username);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/test/user/${username}`);
 
         if (response.status !== 200) {
           console.error('Error al obtener el historial:', response);

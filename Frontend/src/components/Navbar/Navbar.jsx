@@ -32,8 +32,8 @@ const Navbar = ({ sound, setSound, setThemeModalIsOpen }) => {
       numHardTests: 0,
       numMediumTests: 0,
       totalTests: 0,
-      imageURL: 'https://t4.ftcdn.net/jpg/03/49/49/79/360_F_349497933_Ly4im8BDmHLaLzgyKg2f2yZOvJjBtlw5.webp'
-    }
+    },
+    imageURL: 'https://t4.ftcdn.net/jpg/03/49/49/79/360_F_349497933_Ly4im8BDmHLaLzgyKg2f2yZOvJjBtlw5.webp'
   })
 
   useEffect(() => {
@@ -41,7 +41,7 @@ const Navbar = ({ sound, setSound, setThemeModalIsOpen }) => {
       try {
         if (sessionStorage.getItem('loggedIn') === 'true') {
 
-          const response = await axios.get('http://localhost:3000/user/data', {
+          const response = await axios.get(`${import.meta.env.VITE_API_URL}/user/data`, {
             headers: {
               username: JSON.parse(sessionStorage.getItem('userData')).username
               // username: sessionStorage.getItem('userData').username
@@ -63,7 +63,7 @@ const Navbar = ({ sound, setSound, setThemeModalIsOpen }) => {
     fetchUser();
 
 
-  });
+  }, []);
 
   return (
     <nav className="navbar w-4/5 h-1/5 flex items-center p-16">

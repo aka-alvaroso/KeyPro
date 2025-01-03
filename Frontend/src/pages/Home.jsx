@@ -1,6 +1,5 @@
 // src/pages/Home.jsx
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useTheme } from '../context/ThemeContext';
 
@@ -13,6 +12,7 @@ import Timebar from '../components/Timebar/Timebar'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRotateRight, faGear, faPenToSquare, faChartSimple, faEarthAmericas } from '@fortawesome/free-solid-svg-icons'
+import Footer from '../components/Footer/Footer';
 
 
 const Home = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen }) => {
@@ -147,11 +147,10 @@ const Home = ({ sound, setSound, themeModalIsOpen, setThemeModalIsOpen }) => {
       </main >
 
 
-      <footer className={`w-full h-1/5 mt-auto flex items-center justify-center text-${theme}-text opacity-30`}>
-        <Link to="/about">Acerca de TypeMaster</Link>
-        <p>&nbsp; | &nbsp;</p>
-        <p>Versión 0.0.1</p>
-      </footer>
+
+      {/* Footer */}
+      <Footer />
+
 
 
       {/* Modales */}
