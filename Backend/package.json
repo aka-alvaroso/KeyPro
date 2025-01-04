@@ -7,9 +7,6 @@
     "postinstall": "npm rebuild bcrypt",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "engines": {
-    "node": "18.x"
-  },
   "author": "",
   "license": "ISC",
   "description": "",
