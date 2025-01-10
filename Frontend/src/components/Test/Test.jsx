@@ -44,6 +44,12 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
   };
 
   useEffect(() => {
+
+    setHasResultsSent(testResults.isReady)
+
+  }, [testResults])
+
+  useEffect(() => {
     let timer;
 
     if (testStarted) {
@@ -97,10 +103,6 @@ const Test = ({ testStarted, setTestStarted, sound, settings, testResults, setTe
           test: false
         });
         fetchText();
-        return;
-      }
-
-      if (hasResultsSent) {
         return;
       }
 
