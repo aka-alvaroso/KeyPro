@@ -1,6 +1,6 @@
-# **TypeMaster**
+# **KeyPro**
 
-¡Pon a prueba tu velocidad y precisión al escribir con **TypeMaster**! 🚀  
+¡Pon a prueba tu velocidad y precisión al escribir con **KeyPro**! 🚀  
 Un test de mecanografía dinámico y personalizable para mejorar tus habilidades y competir contigo mismo o con otros.
 
 ## **Características**
@@ -32,8 +32,8 @@ Un test de mecanografía dinámico y personalizable para mejorar tus habilidades
 ### **Pasos**
 1. Clona el repositorio:
    ```bash
-   git clone https://github.com/aka-alvaroso/TypeMaster.git
-   cd TypeMaster
+   git clone https://github.com/aka-alvaroso/KeyPro.git
+   cd KeyPro
    ```
 2. Configura las variables de entorno:
    - Crea un archivo `.env` en el directorio raíz del backend con:

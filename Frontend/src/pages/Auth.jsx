@@ -24,7 +24,7 @@ const Auth = () => {
       <div className={`w-full h-4/5 flex flex-col items-center justify-center`}>
         <div className="flex gap-2 items-center">
           <img className={`w-16 h-auto ${theme === 'lightOrange' || theme === 'lightGreen' || theme === 'lightBlue' ? 'invert' : ''}`} src='/logo.png' alt='logo' />
-          <h1 className='text-4xl font-bold'>TypeMaster</h1>
+          <h1 className='text-4xl font-bold'>KeyPro</h1>
 
         </div>
 

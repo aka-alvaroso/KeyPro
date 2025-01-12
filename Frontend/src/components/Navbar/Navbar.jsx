@@ -70,7 +70,7 @@ const Navbar = ({ sound, setSound, setThemeModalIsOpen }) => {
       <div className='flex items-center justify-center'>
         <Link className='flex items-center justify-center' to='/' >
           <img className={`w-16 h-auto ${theme === 'lightOrange' || theme === 'lightGreen' || theme === 'lightBlue' ? 'invert' : ''}`} src='/logo.png' alt='logo' />
-          <h2 className='text-2xl font-bold ml-4'>TypeMaster</h2>
+          <h2 className='text-2xl font-bold ml-4'>KeyPro</h2>
         </Link>
 
         <button
