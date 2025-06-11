@@ -1,24 +1,27 @@
 // /models/Text
 
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const textSchema = new Schema({
-  content: { type: String, required: true },
-  numWords: { type: Number, required: true },
-  difficulty: {
-    type: String,
-    enum: ['easy', 'medium', 'hard'],
-    required: true
+const textSchema = new Schema(
+  {
+    content: { type: String, required: true },
+    numWords: { type: Number, required: true },
+    difficulty: {
+      type: String,
+      enum: ["easy", "medium", "hard"],
+      required: true,
+    },
+    type: {
+      type: String,
+      enum: ["normal", "code", "text"],
+      required: true,
+    },
+    language: { type: String, default: null },
   },
-  type: {
-    type: String,
-    enum: ['normal', 'code'],
-    required: true
-  },
-  language: { type: String, default: null },
-}, { timestamps: true });
+  { timestamps: true }
+);
 
-const Text = mongoose.model('Text', textSchema);
+const Text = mongoose.model("Text", textSchema);
 
 module.exports = Text;

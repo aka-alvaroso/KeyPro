@@ -17,6 +17,7 @@
     "gopd": "^1.2.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.12.0",
-    "mongoose": "^8.7.0"
+    "mongoose": "^8.7.0",
+    "whatwg-url": "^14.1.0"
   }
 }

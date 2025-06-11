@@ -1,22 +1,16 @@
 // /controllers/textController.js
 
-const Text = require('../models/Text'); // Importa el modelo de Text
+const Text = require("../models/Text"); // Importa el modelo de Text
 
 // Función para crear y guardar un nuevo texto
 const createText = async (req, res) => {
   try {
     // Destructuramos los campos que esperamos en el cuerpo de la solicitud
-    const {
-      content,
-      numWords,
-      difficulty,
-      type,
-      language
-    } = req.body;
+    const { content, numWords, difficulty, type, language } = req.body;
 
     // Verificamos si todos los campos requeridos están presentes
     if (!content || !difficulty || !type) {
-      return res.status(400).json({ message: 'Faltan campos obligatorios' });
+      return res.status(400).json({ message: "Faltan campos obligatorios" });
     }
 
     // Crear un nuevo texto utilizando el modelo Text
@@ -33,11 +27,10 @@ const createText = async (req, res) => {
 
     // Enviar una respuesta con el texto guardado
     res.status(201).json(savedText);
-
   } catch (e) {
     // Manejo de errores
-    console.error('Error al guardar el texto:', e);
-    res.status(500).json({ message: 'Error al guardar el texto', e });
+    console.error("Error al guardar el texto:", e);
+    res.status(500).json({ message: "Error al guardar el texto", e });
   }
 };
 
@@ -48,18 +41,19 @@ const getTexts = async (req, res) => {
       type: type,
       numWords: numWords,
       difficulty: difficulty,
-      language: language
-
-    }
+      language: language,
+    };
 
     const texts = await Text.find(filter);
     res.json(texts);
   } catch (e) {
-    res.status(500).json({ message: 'Error al obtener textos', error: e.message })
+    res
+      .status(500)
+      .json({ message: "Error al obtener textos", error: e.message });
   }
 };
 
 module.exports = {
   createText,
-  getTexts
+  getTexts,
 };
