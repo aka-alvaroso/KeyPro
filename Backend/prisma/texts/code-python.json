@@ -1,0 +1,42 @@
+[
+  {
+    "difficulty": "easy", "length": "short",
+    "content": "def greet(name):\n    return f'Hello, {name}!'\n\nprint(greet('world'))"
+  },
+  {
+    "difficulty": "easy", "length": "short",
+    "content": "numbers = [1, 2, 3, 4, 5]\ntotal = sum(numbers)\nprint(f'Total: {total}')"
+  },
+  {
+    "difficulty": "easy", "length": "medium",
+    "content": "def is_even(n):\n    return n % 2 == 0\n\nnumbers = range(1, 11)\nevens = list(filter(is_even, numbers))\nprint(evens)"
+  },
+  {
+    "difficulty": "easy", "length": "medium",
+    "content": "fruits = ['apple', 'banana', 'cherry']\nfor i, fruit in enumerate(fruits):\n    print(f'{i + 1}. {fruit}')"
+  },
+  {
+    "difficulty": "medium", "length": "short",
+    "content": "def fibonacci(n):\n    a, b = 0, 1\n    for _ in range(n):\n        yield a\n        a, b = b, a + b\n\nprint(list(fibonacci(10)))"
+  },
+  {
+    "difficulty": "medium", "length": "medium",
+    "content": "from functools import wraps\nimport time\n\ndef timer(fn):\n    @wraps(fn)\n    def wrapper(*args, **kwargs):\n        start = time.perf_counter()\n        result = fn(*args, **kwargs)\n        print(f'{fn.__name__} took {time.perf_counter() - start:.4f}s')\n        return result\n    return wrapper"
+  },
+  {
+    "difficulty": "medium", "length": "long",
+    "content": "class LRUCache:\n    def __init__(self, capacity):\n        self.capacity = capacity\n        self.cache = {}\n        self.order = []\n\n    def get(self, key):\n        if key not in self.cache:\n            return -1\n        self.order.remove(key)\n        self.order.append(key)\n        return self.cache[key]\n\n    def put(self, key, value):\n        if key in self.cache:\n            self.order.remove(key)\n        elif len(self.cache) >= self.capacity:\n            oldest = self.order.pop(0)\n            del self.cache[oldest]\n        self.cache[key] = value\n        self.order.append(key)"
+  },
+  {
+    "difficulty": "hard", "length": "short",
+    "content": "from typing import TypeVar, Callable, Iterator\nT = TypeVar('T')\n\ndef take_while(pred: Callable[[T], bool], it: Iterator[T]) -> Iterator[T]:\n    return (x for x in it if pred(x))"
+  },
+  {
+    "difficulty": "hard", "length": "medium",
+    "content": "import asyncio\nfrom aiohttp import ClientSession\n\nasync def fetch_all(urls: list[str]) -> list[dict]:\n    async with ClientSession() as session:\n        tasks = [session.get(url) for url in urls]\n        responses = await asyncio.gather(*tasks)\n        return [await r.json() for r in responses]"
+  },
+  {
+    "difficulty": "hard", "length": "long",
+    "content": "from dataclasses import dataclass, field\nfrom typing import Generic, TypeVar\n\nT = TypeVar('T')\n\n@dataclass\nclass Result(Generic[T]):\n    value: T | None = None\n    error: Exception | None = None\n    _ok: bool = field(default=True, init=False)\n\n    def __post_init__(self):\n        self._ok = self.error is None\n\n    @classmethod\n    def ok(cls, value: T) -> 'Result[T]':\n        return cls(value=value)\n\n    @classmethod\n    def err(cls, error: Exception) -> 'Result[T]':\n        return cls(error=error)\n\n    def unwrap(self) -> T:\n        if not self._ok:\n            raise self.error\n        return self.value"
+  }
+]

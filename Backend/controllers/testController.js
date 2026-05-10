@@ -1,36 +1,34 @@
-// /controllers/testController.js
-
-const Test = require('../models/Test');
+const prisma = require('../config/db');
 
 const saveTest = async (req, res) => {
   try {
-    const {
-      id,
-      text,
-      player,
-      date,
-      charResults,
-      settings,
-      results
-    } = req.body;
+    const { id, text, player, date, charResults, settings, results } = req.body;
 
     if (!id || !text || !player || !date || !charResults || !settings || !results) {
       return res.status(400).json({ message: 'Faltan campos obligatorios' });
     }
 
-    const newTest = new Test({
-      id,
-      text,
-      player,
-      date,
-      charResults,
-      settings,
-      results
+    const savedTest = await prisma.test.create({
+      data: {
+        id,
+        text,
+        player,
+        date,
+        charResults,
+        mode:         settings.mode,
+        type:         settings.type,
+        difficulty:   settings.difficulty,
+        language:     settings.language ?? null,
+        score:        results.score,
+        speed:        results.speed,
+        accuracy:     results.accuracy,
+        numCharacters: results.numCharacters,
+        numErrors:    results.numErrors,
+        time:         results.time,
+      },
     });
 
-    const savedTest = await newTest.save();
     res.status(201).json(savedTest);
-
   } catch (e) {
     console.error('Error al guardar el test:', e);
     res.status(500).json({ message: 'Error al guardar el test', e });
@@ -40,25 +38,24 @@ const saveTest = async (req, res) => {
 const getUserTests = async (req, res) => {
   try {
     const { username } = req.params;
-    const tests = await Test.find({ player: username }).sort({ createdAt: -1 });;
+    const tests = await prisma.test.findMany({
+      where: { player: username },
+      orderBy: { createdAt: 'desc' },
+    });
     res.json(tests);
   } catch (e) {
-    res.status(500).json({ message: 'Error al obtener tests', error: e.message })
+    res.status(500).json({ message: 'Error al obtener tests', error: e.message });
   }
 };
 
 const getTest = async (req, res) => {
   try {
     const { id } = req.params;
-    const test = await Test.findOne({ id });
+    const test = await prisma.test.findUnique({ where: { id } });
     res.status(200).json(test);
   } catch (e) {
-    res.status(500).json({ message: 'Error al obtener test', error: e.message })
+    res.status(500).json({ message: 'Error al obtener test', error: e.message });
   }
 };
 
-module.exports = {
-  saveTest,
-  getUserTests,
-  getTest
-};
+module.exports = { saveTest, getUserTests, getTest };

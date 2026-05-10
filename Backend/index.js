@@ -5,11 +5,7 @@ const textRoutes = require("./routes/textRoutes");
 const userRoutes = require("./routes/userRoutes");
 const testRoutes = require("./routes/testRoutes");
 const rankingRoutes = require("./routes/rankingRoutes");
-const connectDB = require("./config/db");
 const cors = require("cors");
-
-// Conexión a MongoDB
-connectDB();
 
 const corsOptions = {
   origin: process.env.FRONTEND_URL || "https://alvaroso.dev",

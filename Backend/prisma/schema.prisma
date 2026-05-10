@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Difficulty {
+  easy
+  medium
+  hard
+}
+
+enum TextType {
+  normal
+  code
+  text
+}
+
+enum Length {
+  short
+  medium
+  long
+}
+
+enum TestMode {
+  practice
+  timed
+  competitive
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  imageURL  String   @default("https://t4.ftcdn.net/jpg/03/49/49/79/360_F_349497933_Ly4im8BDmHLaLzgyKg2f2yZOvJjBtlw5.webp")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  totalTests     Int   @default(0)
+  numCharacters  Int   @default(0)
+  numErrors      Int   @default(0)
+  avgAccuracy    Float @default(0)
+  avgSpeed       Float @default(0)
+  bestSpeed      Float @default(0)
+  avgScore       Float @default(0)
+  bestScore      Float @default(0)
+  numEasyTests   Int   @default(0)
+  numMediumTests Int   @default(0)
+  numHardTests   Int   @default(0)
+}
+
+model Text {
+  id         String     @id @default(cuid())
+  content    String
+  difficulty Difficulty
+  length     Length
+  type       TextType
+  language   String?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model Test {
+  id          String     @id
+  text        String
+  player      String
+  date        String
+  charResults Json
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  mode        TestMode
+  type        TextType
+  difficulty  Difficulty
+  language    String?
+
+  score        Float
+  speed        Float
+  accuracy     Float
+  numCharacters Int
+  numErrors    Int
+  time         Float
+}

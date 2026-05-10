@@ -1,0 +1,74 @@
+[
+  {
+    "difficulty": "easy", "length": "short",
+    "content": "the sun rises in the east and sets in the west every single day without fail"
+  },
+  {
+    "difficulty": "easy", "length": "short",
+    "content": "dogs love to run and play fetch in the park with their owners on warm days"
+  },
+  {
+    "difficulty": "easy", "length": "short",
+    "content": "she reads a new book every week and writes down her favorite lines in a journal"
+  },
+  {
+    "difficulty": "easy", "length": "medium",
+    "content": "every morning before work he makes a cup of coffee and sits by the window to watch the birds in the garden before the rest of the house wakes up"
+  },
+  {
+    "difficulty": "easy", "length": "medium",
+    "content": "the library opens at nine and closes at six on weekdays you can borrow up to ten books at a time and return them by the end of the month"
+  },
+  {
+    "difficulty": "easy", "length": "medium",
+    "content": "last summer we drove across the country and stopped at small towns along the way eating local food and sleeping in cheap motels it was the best trip we ever had"
+  },
+  {
+    "difficulty": "easy", "length": "long",
+    "content": "learning to type fast is a skill that takes time and practice but the effort is worth it because once you can type without looking at the keys your thoughts flow directly onto the screen and you spend less time worrying about the mechanics of writing and more time thinking about what you actually want to say which makes you a better and faster writer overall"
+  },
+  {
+    "difficulty": "easy", "length": "long",
+    "content": "the train left the station at seven in the morning and by noon we were already deep in the countryside watching green fields and small villages pass by through the window the journey took eight hours in total and by the time we arrived everyone was tired but happy to have made the trip instead of flying because you see so much more of the country that way"
+  },
+  {
+    "difficulty": "medium", "length": "short",
+    "content": "Machine learning models don't learn rules; they approximate functions from data, which makes interpretability both crucial and elusive."
+  },
+  {
+    "difficulty": "medium", "length": "short",
+    "content": "Version control isn't just about backup—it's a communication tool: every commit message is a note to your future self and your teammates."
+  },
+  {
+    "difficulty": "medium", "length": "short",
+    "content": "The difference between a junior and senior developer often isn't knowledge; it's knowing which trade-offs to make and when to make them."
+  },
+  {
+    "difficulty": "medium", "length": "medium",
+    "content": "Microservices promise scalability and independent deployability, but they introduce distributed systems complexity: network failures, eventual consistency, and the challenge of tracing a single request across dozens of services. The right architecture depends entirely on your team size, traffic patterns, and tolerance for operational overhead."
+  },
+  {
+    "difficulty": "medium", "length": "medium",
+    "content": "The open-source ecosystem thrives on contribution, but sustainability remains a challenge. Projects critical to global infrastructure are often maintained by a handful of unpaid volunteers. The Log4Shell vulnerability in 2021 exposed how deeply a single library can be embedded across thousands of systems, and how fragile that dependency chain can be."
+  },
+  {
+    "difficulty": "medium", "length": "long",
+    "content": "The history of programming languages is a history of abstraction. From raw machine code to assembly, from C to Python, each generation of languages raised the level of abstraction to let developers focus on what to compute rather than how the hardware executes it. Yet every abstraction has a cost: in performance, in predictability, or in the loss of control that sometimes matters enormously in systems programming, embedded devices, or real-time applications where milliseconds determine correctness."
+  },
+  {
+    "difficulty": "hard", "length": "short",
+    "content": "Amdahl's Law states: S(n) = 1 / [(1 − p) + p/n], where p is the parallelizable fraction—a sobering limit on multi-core speedup."
+  },
+  {
+    "difficulty": "hard", "length": "short",
+    "content": "IEEE 754 double-precision floating-point: 1 sign bit, 11 exponent bits (bias 1023), 52 mantissa bits—explaining why 0.1 + 0.2 ≠ 0.3."
+  },
+  {
+    "difficulty": "hard", "length": "medium",
+    "content": "The Byzantine Generals Problem, formalized by Lamport, Shostak, and Pease in 1982, asks: how can distributed nodes reach consensus when some may send contradictory messages? Practical Byzantine Fault Tolerance (PBFT) solves it for f faulty nodes among 3f + 1 total, at the cost of O(n²) message complexity—a trade-off that makes it unsuitable for large-scale public blockchains without significant modification."
+  },
+  {
+    "difficulty": "hard", "length": "long",
+    "content": "Rust's ownership system enforces memory safety without a garbage collector by tracking, at compile time, which variable \"owns\" each piece of heap-allocated data and ensuring that ownership is transferred—\"moved\"—rather than shared carelessly. Borrowing rules guarantee that either one mutable reference or any number of immutable references exist at any point, but never both simultaneously. This prevents data races at the type level, eliminating an entire class of concurrency bugs that plague C and C++ codebases and cost the industry billions of dollars annually in security vulnerabilities and production outages."
+  }
+]

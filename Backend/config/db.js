@@ -1,18 +1,10 @@
-// /config/db.js
 require('dotenv').config();
-const mongoose = require('mongoose');
+const { Pool } = require('pg');
+const { PrismaPg } = require('@prisma/adapter-pg');
+const { PrismaClient } = require('@prisma/client');
 
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log('MongoDB connected successfully to Atlas');
-  } catch (error) {
-    console.error('MongoDB connection failed:', error.message);
-    process.exit(1); // Detener el proceso si la conexión falla
-  }
-};
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
-module.exports = connectDB;
+module.exports = prisma;

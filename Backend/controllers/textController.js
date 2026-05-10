@@ -1,59 +1,60 @@
-// /controllers/textController.js
+const prisma = require('../config/db');
 
-const Text = require("../models/Text"); // Importa el modelo de Text
-
-// Función para crear y guardar un nuevo texto
 const createText = async (req, res) => {
   try {
-    // Destructuramos los campos que esperamos en el cuerpo de la solicitud
-    const { content, numWords, difficulty, type, language } = req.body;
+    const { content, difficulty, length, type, language } = req.body;
 
-    // Verificamos si todos los campos requeridos están presentes
-    if (!content || !difficulty || !type) {
-      return res.status(400).json({ message: "Faltan campos obligatorios" });
+    if (!content || !difficulty || !length || !type) {
+      return res.status(400).json({ message: 'Faltan campos obligatorios' });
     }
 
-    // Crear un nuevo texto utilizando el modelo Text
-    const newText = new Text({
-      content,
-      numWords,
-      difficulty,
-      type,
-      language: language || null, // Si no se proporciona lenguaje, será null
+    const savedText = await prisma.text.create({
+      data: { content, difficulty, length, type, language: language ?? null },
     });
 
-    // Guardar el nuevo texto en la base de datos
-    const savedText = await newText.save();
-
-    // Enviar una respuesta con el texto guardado
     res.status(201).json(savedText);
   } catch (e) {
-    // Manejo de errores
-    console.error("Error al guardar el texto:", e);
-    res.status(500).json({ message: "Error al guardar el texto", e });
+    console.error('Error al guardar el texto:', e);
+    res.status(500).json({ message: 'Error al guardar el texto', e });
   }
 };
 
-const getTexts = async (req, res) => {
+const getText = async (req, res) => {
   try {
-    const { type, numWords, difficulty, language } = req.query;
-    const filter = {
-      type: type,
-      numWords: numWords,
-      difficulty: difficulty,
-      language: language,
+    const { type, difficulty, length, language, recentIds } = req.query;
+
+    const excluded = recentIds ? recentIds.split(',').filter(Boolean) : [];
+
+    const where = {
+      ...(type       && { type }),
+      ...(difficulty && { difficulty }),
+      ...(length     && { length }),
+      ...(language   && { language }),
+      ...(excluded.length > 0 && { id: { notIn: excluded } }),
     };
 
-    const texts = await Text.find(filter);
-    res.json(texts);
+    // Obtener IDs candidatos y elegir uno al azar en el servidor
+    const candidates = await prisma.text.findMany({ where, select: { id: true } });
+
+    // Si la exclusión dejó sin candidatos, reintentar sin ella
+    const finalCandidates = candidates.length > 0
+      ? candidates
+      : await prisma.text.findMany({
+          where: { ...where, id: undefined },
+          select: { id: true },
+        });
+
+    if (finalCandidates.length === 0) {
+      return res.status(404).json({ message: 'No hay textos disponibles para estos filtros' });
+    }
+
+    const randomId = finalCandidates[Math.floor(Math.random() * finalCandidates.length)].id;
+    const text = await prisma.text.findUnique({ where: { id: randomId } });
+
+    res.json(text);
   } catch (e) {
-    res
-      .status(500)
-      .json({ message: "Error al obtener textos", error: e.message });
+    res.status(500).json({ message: 'Error al obtener texto', error: e.message });
   }
 };
 
-module.exports = {
-  createText,
-  getTexts,
-};
+module.exports = { createText, getText };

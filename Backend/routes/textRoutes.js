@@ -5,6 +5,6 @@ const router = express.Router();
 const textController = require('../controllers/textController');
 
 router.post('/create', textController.createText);
-router.get('/get', textController.getTexts);
+router.get('/get', textController.getText);
 
 module.exports = router;

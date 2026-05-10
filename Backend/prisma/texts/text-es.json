@@ -1,0 +1,94 @@
+[
+  {
+    "difficulty": "easy", "length": "short",
+    "content": "el sol sale cada dia y la luna brilla cada noche en el cielo claro"
+  },
+  {
+    "difficulty": "easy", "length": "short",
+    "content": "los ninos juegan en el parque con una pelota roja y un perro blanco"
+  },
+  {
+    "difficulty": "easy", "length": "short",
+    "content": "me gusta leer libros en casa cuando llueve y tomar te caliente"
+  },
+  {
+    "difficulty": "easy", "length": "medium",
+    "content": "cada manana me levanto temprano para salir a correr por el parque antes de que llegue el calor del verano y el aire este cargado"
+  },
+  {
+    "difficulty": "easy", "length": "medium",
+    "content": "el mercado del pueblo abre los sabados y la gente compra frutas frescas verduras del campo y pan recien hecho en el horno de lena"
+  },
+  {
+    "difficulty": "easy", "length": "medium",
+    "content": "mi hermano tiene un gato naranja que duerme todo el dia en el sofa y solo se despierta cuando escucha el sonido de la comida"
+  },
+  {
+    "difficulty": "easy", "length": "long",
+    "content": "cuando era pequeno pasaba los veranos en casa de mis abuelos en un pueblo tranquilo donde no habia mucho que hacer pero el tiempo pasaba despacio y eso era lo mejor de todo porque podiamos jugar en el rio pescar con cana y ver las estrellas por la noche sin prisas"
+  },
+  {
+    "difficulty": "easy", "length": "long",
+    "content": "el tren sale a las ocho de la manana y llega a la ciudad a las diez si no hay retrasos en el camino durante el viaje puedes ver el campo verde los arboles y los pequenos pueblos que quedan atras mientras el paisaje cambia poco a poco hasta que aparecen los primeros edificios de la ciudad"
+  },
+  {
+    "difficulty": "medium", "length": "short",
+    "content": "La inteligencia artificial está cambiando la forma en que trabajamos, aprendemos y nos relacionamos con el mundo."
+  },
+  {
+    "difficulty": "medium", "length": "short",
+    "content": "El 80% de los errores en producción se deben a cambios no probados; la disciplina de testing marca la diferencia."
+  },
+  {
+    "difficulty": "medium", "length": "short",
+    "content": "Diseñar bien una API desde el principio ahorra semanas de refactorización: claridad, consistencia y versionado son clave."
+  },
+  {
+    "difficulty": "medium", "length": "medium",
+    "content": "La arquitectura de software no se trata solo de código: implica decisiones sobre escalabilidad, mantenibilidad y coste. Cada elección tiene consecuencias a largo plazo que pueden facilitar o bloquear el crecimiento del producto."
+  },
+  {
+    "difficulty": "medium", "length": "medium",
+    "content": "Aprender a escribir código limpio es tan importante como aprender a programar. Un código legible reduce errores, facilita la revisión y permite que otros —o tú mismo en el futuro— entiendas qué hace cada parte sin necesidad de comentarios excesivos."
+  },
+  {
+    "difficulty": "medium", "length": "medium",
+    "content": "El fenómeno de la deuda técnica aparece cuando se toman atajos en el desarrollo para ganar tiempo a corto plazo. Con el tiempo, esos atajos se acumulan y ralentizan el avance del equipo hasta que la refactorización se vuelve inevitable y costosa."
+  },
+  {
+    "difficulty": "medium", "length": "long",
+    "content": "La historia de la computación moderna está llena de decisiones que parecían menores en su momento pero resultaron ser fundamentales. La elección de un tipo de dato, el diseño de un protocolo de red o la forma en que se organiza la memoria pueden determinar si un sistema escala con elegancia o colapsa bajo su propio peso años después de haber sido construido."
+  },
+  {
+    "difficulty": "medium", "length": "long",
+    "content": "El movimiento del software libre nació de la convicción de que el conocimiento no debe tener dueño. Richard Stallman, al no poder modificar el código de una impresora en 1980, decidió que ningún programador debería estar en esa situación; así nació GNU y, años más tarde, con el kernel de Linux, el sistema operativo libre más usado del mundo en servidores, móviles y supercomputadoras."
+  },
+  {
+    "difficulty": "hard", "length": "short",
+    "content": "¡Atención! El índice de Gini —0,45 en 2023— refleja una desigualdad estructural que ningún PIB per cápita «récord» puede enmascarar."
+  },
+  {
+    "difficulty": "hard", "length": "short",
+    "content": "La función φ(n) de Euler cuenta los enteros entre 1 y n coprimos con n; si n = p·q con p, q primos: φ(n) = (p−1)(q−1)."
+  },
+  {
+    "difficulty": "hard", "length": "short",
+    "content": "El protocolo TLS 1.3 eliminó los cipher suites débiles (RC4, 3DES, SHA-1) y redujo el handshake a 1-RTT, mejorando latencia y seguridad simultáneamente."
+  },
+  {
+    "difficulty": "hard", "length": "medium",
+    "content": "La complejidad computacional clasifica los problemas según los recursos necesarios para resolverlos. P contiene los problemas resolubles en tiempo polinómico; NP, aquellos cuya solución se verifica en tiempo polinómico. La pregunta de si P = NP sigue abierta y es considerada el problema más importante de las ciencias de la computación."
+  },
+  {
+    "difficulty": "hard", "length": "medium",
+    "content": "El teorema CAP establece que un sistema distribuido no puede garantizar simultáneamente consistencia (C), disponibilidad (A) y tolerancia a particiones (P). En la práctica, ante una partición de red inevitable, los diseñadores deben elegir entre CP —priorizar consistencia— o AP —priorizar disponibilidad—, con implicaciones directas en la experiencia del usuario."
+  },
+  {
+    "difficulty": "hard", "length": "long",
+    "content": "La criptografía asimétrica, propuesta por Diffie y Hellman en 1976, revolucionó las comunicaciones seguras al eliminar la necesidad de compartir una clave secreta previamente. RSA, publicado en 1977 por Rivest, Shamir y Adleman, se basa en la dificultad de factorizar el producto de dos números primos grandes: n = p·q. La seguridad del sistema depende de que, dado n público, sea computacionalmente inviable obtener p y q en tiempo razonable —un problema para el que aún no existe algoritmo clásico eficiente, aunque los computadores cuánticos podrían romperlo con el algoritmo de Shor."
+  },
+  {
+    "difficulty": "hard", "length": "long",
+    "content": "Los sistemas de tipos en lenguajes de programación no son mero formalismo académico: son contratos ejecutables que el compilador verifica antes de que el código llegue a producción. Haskell, con su sistema de tipos Hindley-Milner y las typeclasses, permite expresar invariantes complejos —como la ausencia de efectos secundarios mediante IO— directamente en los tipos. Rust lleva esta idea más lejos al codificar la propiedad y el tiempo de vida de las referencias en el sistema de tipos, eliminando en tiempo de compilación clases enteras de bugs de memoria sin necesidad de un recolector de basura."
+  }
+]

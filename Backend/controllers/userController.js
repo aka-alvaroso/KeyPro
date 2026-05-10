@@ -1,8 +1,6 @@
-// /controllers/userController.js
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-
-const User = require('../models/User');
+const prisma = require('../config/db');
 
 const registerUser = async (req, res) => {
   try {
@@ -12,27 +10,19 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Faltan campos obligatorios' });
     }
 
-    let userExists = await User.findOne({ email });
-
-    if (userExists) {
-      return res.status(400).json({ message: 'El usuario ya existe' });
-    }
-
-    userExists = await User.findOne({ username });
-
-    if (userExists) {
-      return res.status(400).json({ message: 'El usuario ya existe' });
-    }
-
-    const newUser = new User({
-      username,
-      email,
-      password: bcrypt.hashSync(password, 10),
+    const userExists = await prisma.user.findFirst({
+      where: { OR: [{ email }, { username }] },
     });
 
-    const savedUser = await newUser.save();
-    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    if (userExists) {
+      return res.status(400).json({ message: 'El usuario ya existe' });
+    }
 
+    const savedUser = await prisma.user.create({
+      data: { username, email, password: bcrypt.hashSync(password, 10) },
+    });
+
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.status(201).json({ token, user: savedUser });
 
   } catch (e) {
@@ -49,7 +39,7 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ message: 'Faltan campos obligatorios' });
     }
 
-    const user = await User.findOne({ email });
+    const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user || !bcrypt.compareSync(password, user.password)) {
       return res.status(401).json({ message: 'Credenciales incorrectas' });
@@ -65,114 +55,93 @@ const loginUser = async (req, res) => {
 };
 
 const updateStats = async (req, res) => {
-
   try {
     const { email, stats, test } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    const newStats = {
-      avgAccuracy: Math.trunc(((user.stats.avgAccuracy * user.stats.totalTests + stats.accurate) / (user.stats.totalTests + 1)) * 10) / 10,
-      avgScore: Math.trunc(((user.stats.avgScore * user.stats.totalTests + stats.score) / (user.stats.totalTests + 1)) * 10) / 10,
-      avgSpeed: Math.trunc(((user.stats.avgSpeed * user.stats.totalTests + stats.cpm) / (user.stats.totalTests + 1)) * 10) / 10,
-
-      bestScore: Math.max(user.stats.bestScore, stats.score),
-      bestSpeed: Math.max(user.stats.bestSpeed, stats.cpm),
-      numCharacters: user.stats.numCharacters + stats.totalChar,
-      numErrors: user.stats.numErrors + stats.errors,
-      numEasyTests: test.difficulty === 'easy' ? user.stats.numEasyTests + 1 : user.stats.numEasyTests,
-      numMediumTests: test.difficulty === 'medium' ? user.stats.numMediumTests + 1 : user.stats.numMediumTests,
-      numHardTests: test.difficulty === 'hard' ? user.stats.numHardTests + 1 : user.stats.numHardTests,
-      totalTests: user.stats.totalTests + 1
-    };
-
-    user.stats = newStats;
-
-    await user.save();
+    const t = user.totalTests;
+    await prisma.user.update({
+      where: { email },
+      data: {
+        avgAccuracy:    Math.trunc(((user.avgAccuracy * t + stats.accurate) / (t + 1)) * 10) / 10,
+        avgScore:       Math.trunc(((user.avgScore * t + stats.score) / (t + 1)) * 10) / 10,
+        avgSpeed:       Math.trunc(((user.avgSpeed * t + stats.cpm) / (t + 1)) * 10) / 10,
+        bestScore:      Math.max(user.bestScore, stats.score),
+        bestSpeed:      Math.max(user.bestSpeed, stats.cpm),
+        numCharacters:  user.numCharacters + stats.totalChar,
+        numErrors:      user.numErrors + stats.errors,
+        numEasyTests:   test.difficulty === 'easy'   ? user.numEasyTests + 1   : user.numEasyTests,
+        numMediumTests: test.difficulty === 'medium' ? user.numMediumTests + 1 : user.numMediumTests,
+        numHardTests:   test.difficulty === 'hard'   ? user.numHardTests + 1   : user.numHardTests,
+        totalTests:     t + 1,
+      },
+    });
 
     res.status(200).json({ message: 'Estadísticas actualizadas correctamente' });
   } catch (e) {
     console.error('Error al editar el usuario:', e);
     res.status(500).json({ message: 'Error al editar el usuario', e });
   }
-
-}
+};
 
 const getUserData = async (req, res) => {
   try {
     const { username } = req.headers;
 
-    const user = await User.findOne({ username });
+    const user = await prisma.user.findUnique({ where: { username } });
 
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
     res.status(200).json({ user });
-
   } catch (e) {
     console.error('Error al obtener el usuario:', e);
     res.status(500).json({ message: 'Error al obtener el usuario', e });
   }
-}
+};
 
 const updateUserData = async (req, res) => {
   try {
-
     const { username, imageURL } = req.body;
 
-    const user = await User.findOne({ username });
+    const user = await prisma.user.findUnique({ where: { username } });
 
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    user.imageURL = imageURL;
-
-    await user.save();
-
+    await prisma.user.update({ where: { username }, data: { imageURL } });
     res.status(200).json({ message: 'Imagen actualizada correctamente' });
 
   } catch (e) {
     console.error('Error al editar el usuario:', e);
     res.status(500).json({ message: 'Error al editar el usuario', e });
   }
-}
+};
 
 const deleteUser = async (req, res) => {
   try {
     const { email } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    await user.remove();
-
-    res.status(204).json({ message: 'Usuario eliminado correctamente' });
+    await prisma.user.delete({ where: { email } });
+    res.status(204).send();
 
   } catch (e) {
     console.error('Error al eliminar el usuario:', e);
     res.status(500).json({ message: 'Error al eliminar el usuario', e });
   }
-
-}
-
-
-module.exports = {
-  registerUser,
-  loginUser,
-  updateStats,
-  getUserData,
-  updateUserData,
-  deleteUser
 };
 
-
-
+module.exports = { registerUser, loginUser, updateStats, getUserData, updateUserData, deleteUser };

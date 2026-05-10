@@ -1,0 +1,46 @@
+[
+  {
+    "difficulty": "easy", "length": "short",
+    "content": "const add = (a, b) => a + b;\nconsole.log(add(3, 4));"
+  },
+  {
+    "difficulty": "easy", "length": "short",
+    "content": "const names = ['Ana', 'Luis', 'Sara'];\nnames.forEach(name => console.log(name));"
+  },
+  {
+    "difficulty": "easy", "length": "medium",
+    "content": "function greet(name) {\n  if (!name) return 'Hello, stranger!';\n  return `Hello, ${name}!`;\n}\nconsole.log(greet('world'));\nconsole.log(greet());"
+  },
+  {
+    "difficulty": "easy", "length": "medium",
+    "content": "const numbers = [1, 2, 3, 4, 5];\nconst evens = numbers.filter(n => n % 2 === 0);\nconst doubled = evens.map(n => n * 2);\nconsole.log(doubled);"
+  },
+  {
+    "difficulty": "medium", "length": "short",
+    "content": "const fetchUser = async (id) => {\n  const res = await fetch(`/api/users/${id}`);\n  if (!res.ok) throw new Error('Not found');\n  return res.json();\n};"
+  },
+  {
+    "difficulty": "medium", "length": "short",
+    "content": "const debounce = (fn, ms) => {\n  let timer;\n  return (...args) => {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn(...args), ms);\n  };\n};"
+  },
+  {
+    "difficulty": "medium", "length": "medium",
+    "content": "class EventEmitter {\n  constructor() { this.events = {}; }\n  on(event, fn) {\n    (this.events[event] ??= []).push(fn);\n  }\n  emit(event, ...args) {\n    this.events[event]?.forEach(fn => fn(...args));\n  }\n}"
+  },
+  {
+    "difficulty": "medium", "length": "long",
+    "content": "const memoize = (fn) => {\n  const cache = new Map();\n  return function(...args) {\n    const key = JSON.stringify(args);\n    if (cache.has(key)) return cache.get(key);\n    const result = fn.apply(this, args);\n    cache.set(key, result);\n    return result;\n  };\n};\n\nconst fib = memoize((n) => {\n  if (n <= 1) return n;\n  return fib(n - 1) + fib(n - 2);\n});"
+  },
+  {
+    "difficulty": "hard", "length": "short",
+    "content": "const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);\nconst transform = pipe(x => x * 2, x => x + 1, x => x ** 2);\nconsole.log(transform(3));"
+  },
+  {
+    "difficulty": "hard", "length": "medium",
+    "content": "function* paginate(fetchFn, pageSize = 10) {\n  let page = 0, done = false;\n  while (!done) {\n    const items = await fetchFn({ page: page++, size: pageSize });\n    if (items.length < pageSize) done = true;\n    yield* items;\n  }\n}"
+  },
+  {
+    "difficulty": "hard", "length": "long",
+    "content": "const createStore = (reducer, initialState) => {\n  let state = initialState;\n  const listeners = new Set();\n\n  const getState = () => state;\n  const dispatch = (action) => {\n    state = reducer(state, action);\n    listeners.forEach(fn => fn(state));\n  };\n  const subscribe = (fn) => {\n    listeners.add(fn);\n    return () => listeners.delete(fn);\n  };\n\n  dispatch({ type: '@@INIT' });\n  return { getState, dispatch, subscribe };\n};"
+  }
+]

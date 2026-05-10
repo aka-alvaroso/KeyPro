@@ -11,9 +11,9 @@ const GameSelector = ({ setGameSettings }) => {
   const [mode, setMode] = useState('practice')
   const [type, setType] = useState('text')
   const [difficulty, setDifficulty] = useState('easy')
+  const [length, setLength] = useState('medium')
   const [selector, setSelector] = useState('practice')
 
-  const [wordsSettings, setWordsSettings] = useState('50')
   const [timeSettings, setTimeSettings] = useState('60')
   const [codeSettings, setCodeSettings] = useState('')
   const [langSettings, setLangSettings] = useState('es')
@@ -25,7 +25,8 @@ const GameSelector = ({ setGameSettings }) => {
     setShowSettings(false)
   })
 
-  function handleClick (btn) {
+  function handleClick (btn, e) {
+    e.currentTarget.blur();
 
     switch (btn) {
 
@@ -65,63 +66,43 @@ const GameSelector = ({ setGameSettings }) => {
         setSelector('easy')
         setDifficulty('easy')
         setShowSettings(false)
-        setGameSettings((prevSettings) => ({
-          ...prevSettings,
-          difficulty: 'easy',
-        }));
+        setGameSettings(p => ({ ...p, difficulty: 'easy' }));
         break
       case 'medium':
         setSelector('medium')
         setDifficulty('medium')
         setShowSettings(false)
-        setGameSettings((prevSettings) => ({
-          ...prevSettings,
-          difficulty: 'medium',
-        }));
+        setGameSettings(p => ({ ...p, difficulty: 'medium' }));
         break
       case 'hard':
         setSelector('hard')
         setDifficulty('hard')
         setShowSettings(false)
-        setGameSettings((prevSettings) => ({
-          ...prevSettings,
-          difficulty: 'hard',
-        }));
+        setGameSettings(p => ({ ...p, difficulty: 'hard' }));
+        break
+
+      case 'short':
+        setLength('short')
+        setShowSettings(false)
+        setGameSettings(p => ({ ...p, length: 'short' }));
+        break
+      case 'long':
+        setLength('long')
+        setShowSettings(false)
+        setGameSettings(p => ({ ...p, length: 'long' }));
+        break
+      case 'medium-length':
+        setLength('medium')
+        setShowSettings(false)
+        setGameSettings(p => ({ ...p, length: 'medium' }));
         break
     }
   }
 
-  function handleClickMenu (btn) {
+  function handleClickMenu (btn, e) {
+    e.currentTarget.blur();
 
     switch (btn) {
-      case '10':
-        setWordsSettings('10')
-        setShowSettings(false)
-        setGameSettings((prevSettings) => ({
-          ...prevSettings,
-          mode: 'practice',
-          numWords: 10,
-        }));
-        break
-      case '50':
-        setWordsSettings('50')
-        setShowSettings(false)
-        setGameSettings((prevSettings) => ({
-          ...prevSettings,
-          mode: 'practice',
-          numWords: 50,
-        }));
-        break
-      case '100':
-        setWordsSettings('100')
-        setShowSettings(false)
-        setGameSettings((prevSettings) => ({
-          ...prevSettings,
-          mode: 'practice',
-          numWords: 100,
-        }));
-        break
-
       case '30':
         setTimeSettings('30')
         setShowSettings(false)
@@ -221,42 +202,60 @@ const GameSelector = ({ setGameSettings }) => {
 
   return (
     <>
-      <div className='flex w-full items-center justify-between'>
-        <div>
-          <button
-            onClick={() => handleClick('practice')}
-            className={`${mode === 'practice' ? `text-${theme}-primary` : ''}  text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>Práctica</button>
-          <button
-            onClick={() => handleClick('timed')}
-            className={`${mode === 'timed' ? `text-${theme}-primary` : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>Cronómetro</button>
-          <button disabled
-            onClick={() => handleClick('competitive')}
-            className={`${mode === 'competitive' ? `text-${theme}-primary` : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary line-through`}>Competitivo</button>
+      <div className='flex flex-col w-full gap-1'>
+        {/* Fila 1: Modo y Tipo */}
+        <div className='flex w-full items-center justify-center gap-2'>
+          <div>
+            <button
+              onClick={(e) => handleClick('practice', e)}
+              className={`${mode === 'practice' ? `text-${theme}-primary` : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>Práctica</button>
+            <button
+              onClick={(e) => handleClick('timed', e)}
+              className={`${mode === 'timed' ? `text-${theme}-primary` : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>Cronómetro</button>
+            <button disabled
+              onClick={(e) => handleClick('competitive', e)}
+              className={`${mode === 'competitive' ? `text-${theme}-primary` : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary line-through`}>Competitivo</button>
+          </div>
+
+          <span className='w-0.5 h-5 rounded-full bg-stone-700'></span>
+
+          <div>
+            <button
+              onClick={(e) => handleClick('text', e)}
+              className={`${type === 'text' ? `text-${theme}-primary` : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>Texto</button>
+            <button
+              onClick={(e) => handleClick('code', e)}
+              className={`${type === 'code' ? `text-${theme}-primary` : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>Código</button>
+          </div>
         </div>
 
-        <span className='w-0.5 h-4/6 rounded-full bg-stone-700'></span>
+        {/* Fila 2: Dificultad y Longitud */}
+        <div className='flex w-full items-center justify-center gap-2'>
+          <div>
+            <button
+              onClick={(e) => handleClick('easy', e)}
+              className={`${difficulty === 'easy' ? `text-${theme}-primary` : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>Fácil</button>
+            <button
+              onClick={(e) => handleClick('medium', e)}
+              className={`${difficulty === 'medium' ? `text-${theme}-primary` : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>Medio</button>
+            <button
+              onClick={(e) => handleClick('hard', e)}
+              className={`${difficulty === 'hard' ? `text-${theme}-primary` : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>Difícil</button>
+          </div>
 
-        <div>
-          <button
-            onClick={() => handleClick('text')}
-            className={`${type === 'text' ? `text-${theme}-primary` : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>Texto</button>
-          <button
-            onClick={() => handleClick('code')}
-            className={`${type === 'code' ? `text-${theme}-primary` : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>Código</button>
-        </div>
+          <span className='w-0.5 h-5 rounded-full bg-stone-700'></span>
 
-        <span className='w-0.5 h-4/6 rounded-full bg-stone-700'></span>
-
-        <div>
-          <button
-            onClick={() => handleClick('easy')}
-            className={`${difficulty === 'easy' ? `text-${theme}-primary` : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>Fácil</button>
-          <button
-            onClick={() => handleClick('medium')}
-            className={`${difficulty === 'medium' ? `text-${theme}-primary` : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>Medio</button>
-          <button
-            onClick={() => handleClick('hard')}
-            className={`${difficulty === 'hard' ? `text-${theme}-primary` : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>Difícil</button>
+          <div>
+            <button
+              onClick={(e) => handleClick('short', e)}
+              className={`${length === 'short' ? `text-${theme}-primary` : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>Corto</button>
+            <button
+              onClick={(e) => handleClick('medium-length', e)}
+              className={`${length === 'medium' ? `text-${theme}-primary` : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>Medio</button>
+            <button
+              onClick={(e) => handleClick('long', e)}
+              className={`${length === 'long' ? `text-${theme}-primary` : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>Largo</button>
+          </div>
         </div>
       </div>
 
@@ -265,22 +264,7 @@ const GameSelector = ({ setGameSettings }) => {
       >
 
         {
-          selector === 'practice' ?
-            <>
-              <span className={`text-md text-${theme}-primary`}>
-                Número de palabras
-              </span>
-              <br />
-              <button
-                onClick={() => handleClickMenu('10')}
-                className={`${wordsSettings === '10' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>10</button>
-              <button
-                onClick={() => handleClickMenu('50')}
-                className={`${wordsSettings === '50' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>50</button>
-              <button
-                onClick={() => handleClickMenu('100')}
-                className={`${wordsSettings === '100' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>100</button>
-            </> :
+          selector === 'practice' ? <div className='h-4' /> :
             selector === 'timed' ?
               <>
                 <span className={`text-md text-${theme}-primary`}>
@@ -288,13 +272,13 @@ const GameSelector = ({ setGameSettings }) => {
                 </span>
                 <br />
                 <button
-                  onClick={() => handleClickMenu('30')}
+                  onClick={(e) => handleClickMenu('30', e)}
                   className={`${timeSettings === '30' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>30s</button>
                 <button
-                  onClick={() => handleClickMenu('60')}
+                  onClick={(e) => handleClickMenu('60', e)}
                   className={`${timeSettings === '60' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>60s</button>
                 <button
-                  onClick={() => handleClickMenu('120')}
+                  onClick={(e) => handleClickMenu('120', e)}
                   className={`${timeSettings === '120' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>120s</button>
               </> :
               selector === 'text' ?
@@ -304,10 +288,10 @@ const GameSelector = ({ setGameSettings }) => {
                   </span>
                   <br />
                   <button
-                    onClick={() => handleClickMenu('es')}
+                    onClick={(e) => handleClickMenu('es', e)}
                     className={`${langSettings === 'es' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>Español</button>
                   <button
-                    onClick={() => handleClickMenu('en')}
+                    onClick={(e) => handleClickMenu('en', e)}
                     className={`${langSettings === 'en' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>English</button>
                 </> :
                 selector === 'code' ?
@@ -317,19 +301,19 @@ const GameSelector = ({ setGameSettings }) => {
                     </span>
                     <br />
                     <button
-                      onClick={() => handleClickMenu('python')}
+                      onClick={(e) => handleClickMenu('python', e)}
                       className={`${codeSettings === 'python' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>Python</button>
                     <button
-                      onClick={() => handleClickMenu('javascript')}
+                      onClick={(e) => handleClickMenu('javascript', e)}
                       className={`${codeSettings === 'javascript' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>JavaScript</button>
                     <button
-                      onClick={() => handleClickMenu('c++')}
+                      onClick={(e) => handleClickMenu('c++', e)}
                       className={`${codeSettings === 'c++' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>C++</button>
                     <button
-                      onClick={() => handleClickMenu('html')}
+                      onClick={(e) => handleClickMenu('html', e)}
                       className={`${codeSettings === 'html' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>HTML</button>
                     <button
-                      onClick={() => handleClickMenu('java')}
+                      onClick={(e) => handleClickMenu('java', e)}
                       className={`${codeSettings === 'java' ? 'active' : ''} text-sm m-2 p-1 rounded-full transition hover:text-${theme}-primary`}>Java</button>
                   </> : <div className='h-16' />
         }
