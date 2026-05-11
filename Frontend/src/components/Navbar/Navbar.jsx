@@ -83,7 +83,7 @@ const Navbar = ({ sound, setSound, setThemeModalIsOpen }) => {
                 ? "invert"
                 : ""
             }`}
-            src="/logo.png"
+            src="/keypro/logo.png"
             alt="logo"
           />
           <h2 className="text-2xl font-bold ml-4">KeyPro</h2>
