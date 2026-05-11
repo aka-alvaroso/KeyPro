@@ -104,7 +104,7 @@ const Profile = ({
           >
             <p className={`text-${theme}-text`}>Puntuación media</p>
             <p className="text-center text-7xl font-bold">
-              {userData.stats.avgScore}
+              {userData.avgScore}
               <span className={`text-2xl font-bold text-${theme}-primary`}>
                 pts.
               </span>
@@ -124,14 +124,14 @@ const Profile = ({
             <p className={`text-${theme}-text`}>Velocidad media</p>
             {velocityType === "ppm" ? (
               <p className="text-center text-7xl font-bold">
-                {Math.trunc((userData.stats.avgSpeed / 5) * 10) / 10}
+                {Math.trunc((userData.avgSpeed / 5) * 10) / 10}
                 <span className={`text-2xl font-bold text-${theme}-primary`}>
                   PPM
                 </span>
               </p>
             ) : (
               <p className="text-center text-7xl font-bold">
-                {userData.stats.avgSpeed}
+                {userData.avgSpeed}
                 <span className={`text-2xl font-bold text-${theme}-primary`}>
                   CPM
                 </span>
@@ -143,7 +143,7 @@ const Profile = ({
           >
             <p className={`text-${theme}-text`}>Precisión media</p>
             <p className="text-center text-7xl font-bold">
-              {userData.stats.avgAccuracy}
+              {userData.avgAccuracy}
               <span className={`text-2xl font-bold text-${theme}-primary`}>
                 %
               </span>
@@ -160,7 +160,7 @@ const Profile = ({
         >
           <p className={`text-${theme}-text`}>Mejor puntuación</p>
           <p className="text-center text-7xl font-bold">
-            {userData.stats.bestScore}
+            {userData.bestScore}
             <span className={`text-2xl font-bold text-${theme}-primary`}>
               pts.
             </span>
@@ -180,14 +180,14 @@ const Profile = ({
           <p className={`text-${theme}-text`}>Mejor velocidad</p>
           {velocityType === "ppm" ? (
             <p className="text-center text-7xl font-bold">
-              {userData.stats.bestSpeed / 5}
+              {userData.bestSpeed / 5}
               <span className={`text-2xl font-bold text-${theme}-primary`}>
                 PPM
               </span>
             </p>
           ) : (
             <p className="text-center text-7xl font-bold">
-              {userData.stats.bestSpeed}
+              {userData.bestSpeed}
               <span className={`text-2xl font-bold text-${theme}-primary`}>
                 CPM
               </span>
@@ -199,7 +199,7 @@ const Profile = ({
         >
           <p className={`text-${theme}-text`}>Tests jugados</p>
           <p className="text-center text-7xl font-bold">
-            {userData.stats.totalTests}
+            {userData.totalTests}
           </p>
         </div>
         <div
@@ -207,7 +207,7 @@ const Profile = ({
         >
           <p className={`text-${theme}-text`}>Número de errores</p>
           <p className="text-center text-7xl font-bold">
-            {userData.stats.numErrors}
+            {userData.numErrors}
           </p>
         </div>
 
@@ -218,7 +218,7 @@ const Profile = ({
         >
           <p className={`text-${theme}-text`}>Número de caracteres</p>
           <p className="text-center text-7xl font-bold">
-            {userData.stats.numCharacters}
+            {userData.numCharacters}
           </p>
         </div>
         <div
@@ -226,7 +226,7 @@ const Profile = ({
         >
           <p className={`text-${theme}-text`}>Tests fáciles jugados</p>
           <p className="text-center text-7xl font-bold">
-            {userData.stats.numEasyTests}
+            {userData.numEasyTests}
           </p>
         </div>
         <div
@@ -234,7 +234,7 @@ const Profile = ({
         >
           <p className={`text-${theme}-text`}>Tests medios jugados</p>
           <p className="text-center text-7xl font-bold">
-            {userData.stats.numMediumTests}
+            {userData.numMediumTests}
           </p>
         </div>
         <div
@@ -242,7 +242,7 @@ const Profile = ({
         >
           <p className={`text-${theme}-text`}>Tests difíciles jugados</p>
           <p className="text-center text-7xl font-bold">
-            {userData.stats.numHardTests}
+            {userData.numHardTests}
           </p>
         </div>
       </section>

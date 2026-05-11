@@ -171,12 +171,12 @@ const Rankings = ({
                     icon={faArrowUpRightFromSquare}
                   />
                 </Link>
-                <p className="w-[12.5%]">{user.stats.bestScore}</p>
-                <p className="w-[12.5%]">{user.stats.bestSpeed}</p>
-                <p className="w-[12.5%]">{user.stats.avgScore}</p>
-                <p className="w-[12.5%]">{user.stats.avgSpeed}</p>
-                <p className="w-[12.5%]">{user.stats.avgAccuracy}</p>
-                <p className="w-[12.5%]">{user.stats.totalTests}</p>
+                <p className="w-[12.5%]">{user.bestScore}</p>
+                <p className="w-[12.5%]">{user.bestSpeed}</p>
+                <p className="w-[12.5%]">{user.avgScore}</p>
+                <p className="w-[12.5%]">{user.avgSpeed}</p>
+                <p className="w-[12.5%]">{user.avgAccuracy}</p>
+                <p className="w-[12.5%]">{user.totalTests}</p>
               </div>
             ))}
           </div>
