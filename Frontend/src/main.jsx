@@ -6,7 +6,7 @@ import './index.css'
 
 
 createRoot(document.getElementById('root')).render(
-  <Router>
+  <Router basename="/keypro">
     <ThemeProvider>
       <App />
     </ThemeProvider>
