@@ -1,9 +1,7 @@
 import PropTypes from 'prop-types';
-import { useTheme } from '../../context/ThemeContext';
 import { useTypingGame } from '../../hooks/useTypingGame';
 
 const TypingArea = ({ settings, sound, timeRemaining, onStart, onFinish, setAreResultsSaved }) => {
-  const { theme } = useTheme();
   const { text, cursor, charResults } = useTypingGame({
     settings,
     sound,
@@ -14,13 +12,15 @@ const TypingArea = ({ settings, sound, timeRemaining, onStart, onFinish, setAreR
   });
 
   return text.split('').map((char, index) => {
-    let className = '';
+    let className = 'transition-colors duration-75';
     if (index === cursor) {
-      className = `transition text-${theme}-primary underline actual`;
+      className += ' text-kp-accent underline actual';
     } else if (charResults[index]) {
-      className = charResults[index] === 'correct'
-        ? 'transition text-green-600 underline'
-        : 'transition text-red-600 underline';
+      className += charResults[index] === 'correct'
+        ? ' text-kp-text/70 underline'
+        : ' text-red-500 underline';
+    } else {
+      className += ' text-kp-muted';
     }
     return <span key={index} className={className}>{char}</span>;
   });
