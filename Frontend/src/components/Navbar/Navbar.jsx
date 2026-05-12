@@ -7,6 +7,7 @@ import {
   faArrowRightToBracket,
   faChevronDown,
   faCrown,
+  faGear,
   faUser,
   faVolumeHigh,
   faVolumeXmark,
@@ -50,6 +51,13 @@ const Navbar = ({ sound, setSound }) => {
           onClick={() => navigate('/rankings')}
         >
           <FontAwesomeIcon icon={faCrown} />
+        </button>
+
+        <button
+          className="text-kp-muted hover:text-kp-accent transition-colors"
+          onClick={() => navigate('/settings')}
+        >
+          <FontAwesomeIcon icon={faGear} />
         </button>
       </div>
 

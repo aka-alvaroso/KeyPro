@@ -15,7 +15,7 @@ export default {
         'kp-border':  '#C8D6CC',
         'kp-text':    '#080f0f',
         'kp-muted':   '#5C6B63',
-        'kp-accent':  '#ffc914',
+        'kp-accent':  '#0862F3',
       },
     },
   },

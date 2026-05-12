@@ -35,7 +35,7 @@ const Rankings = ({ sound, setSound }) => {
     fetchRanking();
   }, [orderBy]);
 
-  const currentUsername = JSON.parse(sessionStorage.getItem('userData') || '{}').username;
+  const currentUsername = (JSON.parse(sessionStorage.getItem('userData') || 'null') ?? {}).username;
 
   return (
     <div className="h-screen bg-kp-bg text-kp-text w-screen flex flex-col items-center gap-4">

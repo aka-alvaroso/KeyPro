@@ -7,6 +7,7 @@ import Profile from './pages/Profile';
 import History from './pages/History';
 import TestPreview from './pages/TestPreview';
 import Rankings from './pages/Rankings';
+import Settings from './pages/Settings';
 
 function App() {
   const [sound, setSound] = useState(false);
@@ -19,6 +20,7 @@ function App() {
       <Route path="/history/:username" element={<History sound={sound} setSound={setSound} />} />
       <Route path="/test/:id" element={<TestPreview sound={sound} setSound={setSound} />} />
       <Route path="/rankings" element={<Rankings sound={sound} setSound={setSound} />} />
+      <Route path="/settings" element={<Settings sound={sound} setSound={setSound} />} />
     </Routes>
   );
 }
