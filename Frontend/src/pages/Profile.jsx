@@ -1,14 +1,13 @@
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRightArrowLeft, faEdit, faList } from '@fortawesome/free-solid-svg-icons';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { ArrowLeftRight, Pencil, List } from 'lucide-react';
 
 import Navbar from '../components/Navbar/Navbar';
-import EditProfileModal from '../components/EditProfileModal/EditProfileModal';
 import StatCard from '../components/ui/StatCard';
 import Button from '../components/ui/Button';
+import FadeUp from '../components/ui/FadeUp';
 
 const DEFAULT_USER = {
   username: '',
@@ -21,7 +20,7 @@ const DEFAULT_USER = {
 
 const Profile = ({ sound, setSound }) => {
   const { username } = useParams();
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const navigate = useNavigate();
   const [velocityType, setVelocityType] = useState('ppm');
   const [userData, setUserData] = useState(DEFAULT_USER);
 
@@ -43,67 +42,79 @@ const Profile = ({ sound, setSound }) => {
   const toggleVelocity = () => setVelocityType(v => v === 'ppm' ? 'cpm' : 'ppm');
 
   return (
-    <div className="bg-kp-bg text-kp-text w-screen h-screen flex flex-col items-center gap-4">
+    <div className="bg-kp-bg text-kp-text w-screen h-screen flex flex-col items-center">
       <Navbar sound={sound} setSound={setSound} />
 
-      <section className="w-4/5 flex items-center justify-center gap-4">
-        <div className="w-2/5 h-60 flex flex-col items-center justify-center bg-kp-surface rounded-xl p-4">
-          <img className="w-28 h-28 rounded-full object-cover border-2 border-kp-border" src={userData.imageURL} alt="Profile" />
-          <h2 className="text-xl font-medium mt-4">{userData.username}</h2>
-        </div>
-        <div className="w-3/5 h-60 grid grid-cols-3 gap-3">
-          <StatCard label="Puntuación media" value={userData.avgScore} unit="pts." />
-          <StatCard label="Velocidad media" className="relative">
-            <button onClick={toggleVelocity} className="absolute top-3 right-3 text-kp-muted hover:text-kp-accent transition-colors">
-              <FontAwesomeIcon icon={faArrowRightArrowLeft} className="text-xs" />
-            </button>
-            <p className="text-center text-5xl font-medium text-kp-text">
-              {velocityType === 'ppm' ? Math.trunc((userData.avgSpeed / 5) * 10) / 10 : userData.avgSpeed}
-              <span className="text-lg font-medium text-kp-accent ml-1">{velocityType.toUpperCase()}</span>
-            </p>
-          </StatCard>
-          <StatCard label="Precisión media" value={userData.avgAccuracy} unit="%" />
-        </div>
-      </section>
+      <div className="w-full max-w-4xl px-6 pt-8 flex flex-col gap-8">
 
-      <section className="w-4/5 flex flex-wrap items-center justify-center bg-kp-surface rounded-xl p-4 gap-3">
-        <StatCard label="Mejor puntuación" value={userData.bestScore} unit="pts." className="w-1/5" />
-        <StatCard label="Mejor velocidad" className="w-1/5 relative">
-          <button onClick={toggleVelocity} className="absolute top-3 right-3 text-kp-muted hover:text-kp-accent transition-colors">
-            <FontAwesomeIcon icon={faArrowRightArrowLeft} className="text-xs" />
-          </button>
-          <p className="text-center text-5xl font-medium text-kp-text">
-            {velocityType === 'ppm' ? userData.bestSpeed / 5 : userData.bestSpeed}
-            <span className="text-lg font-medium text-kp-accent ml-1">{velocityType.toUpperCase()}</span>
-          </p>
-        </StatCard>
-        <StatCard label="Tests jugados" value={userData.totalTests} className="w-1/5" />
-        <StatCard label="Número de errores" value={userData.numErrors} className="w-1/5" />
-        <StatCard label="Caracteres escritos" value={userData.numCharacters} className="w-1/5" />
-        <StatCard label="Tests fáciles" value={userData.numEasyTests} className="w-1/5" />
-        <StatCard label="Tests medios" value={userData.numMediumTests} className="w-1/5" />
-        <StatCard label="Tests difíciles" value={userData.numHardTests} className="w-1/5" />
-      </section>
+        {/* Profile header */}
+        <FadeUp delay={0} className="flex items-center gap-6 border-b border-kp-border pb-6">
+          <img
+            className="w-24 h-24 rounded-full object-cover border border-kp-border"
+            src={userData.imageURL}
+            alt="Profile"
+          />
+          <div>
+            <p className="text-xs text-kp-muted uppercase tracking-widest mb-1">Perfil</p>
+            <h2 className="text-2xl font-medium text-kp-text">{userData.username}</h2>
+          </div>
+          <div className="ml-auto flex gap-3">
+            {isOwner && (
+              <Button variant="subtle" onClick={() => navigate('/settings', { state: { tab: 'account' } })}>
+                <Pencil size={14} /> Editar perfil
+              </Button>
+            )}
+            <Link to={`/history/${username}`}>
+              <Button variant="subtle">
+                <List size={14} /> Historial
+              </Button>
+            </Link>
+          </div>
+        </FadeUp>
 
-      <div className="flex gap-3">
-        {isOwner && (
-          <Button variant="subtle" onClick={() => setIsProfileModalOpen(true)}>
-            <FontAwesomeIcon icon={faEdit} /> Editar perfil
-          </Button>
-        )}
-        <Link to={`/history/${username}`}>
-          <Button variant="subtle">
-            <FontAwesomeIcon icon={faList} /> Historial
-          </Button>
-        </Link>
+        {/* Top stats */}
+        <FadeUp delay={0.08}>
+          <p className="text-xs text-kp-muted uppercase tracking-widest mb-3">Estadísticas principales</p>
+          <div className="grid grid-cols-3 gap-3">
+            <StatCard label="Puntuación media" value={userData.avgScore} unit="pts." />
+            <StatCard label="Velocidad media" className="relative">
+              <button onClick={toggleVelocity} className="absolute top-4 right-4 text-kp-muted hover:text-kp-accent transition-colors">
+                <ArrowLeftRight size={12} />
+              </button>
+              <p className="text-center text-4xl font-medium text-kp-text">
+                {velocityType === 'ppm' ? Math.trunc((userData.avgSpeed / 5) * 10) / 10 : userData.avgSpeed}
+                <span className="text-lg font-medium text-kp-accent ml-1">{velocityType.toUpperCase()}</span>
+              </p>
+            </StatCard>
+            <StatCard label="Precisión media" value={userData.avgAccuracy} unit="%" />
+          </div>
+        </FadeUp>
+
+        {/* Extended stats */}
+        <FadeUp delay={0.14}>
+          <p className="text-xs text-kp-muted uppercase tracking-widest mb-3">Desglose</p>
+          <div className="grid grid-cols-4 gap-3">
+            <StatCard label="Mejor puntuación" value={userData.bestScore} unit="pts." />
+            <StatCard label="Mejor velocidad" className="relative">
+              <button onClick={toggleVelocity} className="absolute top-4 right-4 text-kp-muted hover:text-kp-accent transition-colors">
+                <ArrowLeftRight size={12} />
+              </button>
+              <p className="text-center text-4xl font-medium text-kp-text">
+                {velocityType === 'ppm' ? Math.trunc((userData.bestSpeed / 5) * 10) / 10 : userData.bestSpeed}
+                <span className="text-lg font-medium text-kp-accent ml-1">{velocityType.toUpperCase()}</span>
+              </p>
+            </StatCard>
+            <StatCard label="Tests jugados" value={userData.totalTests} />
+            <StatCard label="Número de errores" value={userData.numErrors} />
+            <StatCard label="Caracteres escritos" value={userData.numCharacters} />
+            <StatCard label="Tests fáciles" value={userData.numEasyTests} />
+            <StatCard label="Tests medios" value={userData.numMediumTests} />
+            <StatCard label="Tests difíciles" value={userData.numHardTests} />
+          </div>
+        </FadeUp>
+
       </div>
 
-      <EditProfileModal
-        isOpen={isProfileModalOpen}
-        setIsOpen={setIsProfileModalOpen}
-        userData={userData}
-        setUserData={setUserData}
-      />
     </div>
   );
 };

@@ -1,14 +1,45 @@
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUpload } from '@fortawesome/free-solid-svg-icons';
+import { useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Upload } from 'lucide-react';
 
 import Navbar from '../components/Navbar/Navbar';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
+import FadeUp from '../components/ui/FadeUp';
 import { useSettings } from '../context/SettingsContext';
+
+const TYPED_STYLES = [
+  {
+    id: 'none',
+    label: 'Ninguno',
+    preview: (
+      <span className="font-mono text-sm">
+        <span className="text-kp-text/70">co</span><span className="text-red-500">rr</span><span className="text-kp-text/70">ec</span><span className="text-red-500">t</span>
+      </span>
+    ),
+  },
+  {
+    id: 'underline',
+    label: 'Subrayado',
+    preview: (
+      <span className="font-mono text-sm">
+        <span className="text-kp-text/70 underline">co</span><span className="text-red-500 underline">rr</span><span className="text-kp-text/70 underline">ec</span><span className="text-red-500 underline">t</span>
+      </span>
+    ),
+  },
+  {
+    id: 'background',
+    label: 'Fondo',
+    preview: (
+      <span className="font-mono text-sm">
+        <span className="text-kp-text/70 bg-kp-accent/10 rounded-sm">co</span><span className="text-red-500 bg-red-500/10 rounded-sm">rr</span><span className="text-kp-text/70 bg-kp-accent/10 rounded-sm">ec</span><span className="text-red-500 bg-red-500/10 rounded-sm">t</span>
+      </span>
+    ),
+  },
+];
 
 const TABS = [
   { id: 'appearance', label: 'Apariencia' },
@@ -42,22 +73,58 @@ const CURSORS = [
   },
 ];
 
+const TIMER_DISPLAYS = [
+  {
+    id: 'bar',
+    label: 'Barra',
+    preview: (
+      <span className="w-16 h-1.5 bg-kp-border rounded-full overflow-hidden flex">
+        <span className="w-2/3 h-full bg-kp-accent rounded-full" />
+      </span>
+    ),
+  },
+  {
+    id: 'number',
+    label: 'Número',
+    preview: (
+      <span className="text-2xl font-medium text-kp-accent tabular-nums">42</span>
+    ),
+  },
+  {
+    id: 'both',
+    label: 'Ambos',
+    preview: (
+      <span className="flex flex-col items-center gap-1.5">
+        <span className="text-lg font-medium text-kp-accent tabular-nums">42</span>
+        <span className="w-16 h-1.5 bg-kp-border rounded-full overflow-hidden flex">
+          <span className="w-2/3 h-full bg-kp-accent rounded-full" />
+        </span>
+      </span>
+    ),
+  },
+];
+
 const AppearanceTab = () => {
-  const { cursorStyle, setCursorStyle } = useSettings();
+  const { cursorStyle, setCursorStyle, typedStyle, setTypedStyle, timerDisplay, setTimerDisplay } = useSettings();
 
   return (
     <div className="flex flex-col gap-6">
       <div>
         <h3 className="text-sm font-medium text-kp-muted mb-3 uppercase tracking-widest">Cursor</h3>
         <div className="flex gap-3">
-          {CURSORS.map(({ id, label, preview }) => (
-            <button
+          {CURSORS.map(({ id, label, preview }, i) => (
+            <motion.button
               key={id}
               onClick={() => setCursorStyle(id)}
-              className={`flex flex-col items-center gap-3 p-5 rounded-xl border-2 transition-all duration-150 cursor-pointer ${
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25, delay: i * 0.06, ease: 'easeOut' }}
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.97 }}
+              className={`flex-1 flex flex-col items-center gap-3 p-5 border-2 transition-all duration-150 cursor-pointer ${
                 cursorStyle === id
-                  ? 'border-kp-accent bg-kp-accent/5'
-                  : 'border-kp-border bg-kp-surface hover:border-kp-accent/50'
+                  ? 'border-kp-accent bg-kp-accent/10'
+                  : 'border-kp-text/15 bg-kp-text/5 hover:bg-kp-accent/10 hover:border-kp-accent/50'
               }`}
             >
               <span className="text-3xl font-medium w-12 h-10 flex items-center justify-center">
@@ -66,7 +133,61 @@ const AppearanceTab = () => {
               <span className={`text-xs font-medium ${cursorStyle === id ? 'text-kp-accent' : 'text-kp-muted'}`}>
                 {label}
               </span>
-            </button>
+            </motion.button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-sm font-medium text-kp-muted mb-3 uppercase tracking-widest">Tiempo (modo cronómetro)</h3>
+        <div className="flex gap-3">
+          {TIMER_DISPLAYS.map(({ id, label, preview }, i) => (
+            <motion.button
+              key={id}
+              onClick={() => setTimerDisplay(id)}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25, delay: i * 0.06, ease: 'easeOut' }}
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.97 }}
+              className={`flex-1 flex flex-col items-center gap-3 p-5 border-2 transition-all duration-150 cursor-pointer ${
+                timerDisplay === id
+                  ? 'border-kp-accent bg-kp-accent/10'
+                  : 'border-kp-text/15 bg-kp-text/5 hover:bg-kp-accent/10 hover:border-kp-accent/50'
+              }`}
+            >
+              <span className="h-10 flex items-center justify-center">{preview}</span>
+              <span className={`text-xs font-medium ${timerDisplay === id ? 'text-kp-accent' : 'text-kp-muted'}`}>
+                {label}
+              </span>
+            </motion.button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-sm font-medium text-kp-muted mb-3 uppercase tracking-widest">Letra escrita</h3>
+        <div className="flex gap-3">
+          {TYPED_STYLES.map(({ id, label, preview }, i) => (
+            <motion.button
+              key={id}
+              onClick={() => setTypedStyle(id)}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25, delay: i * 0.06, ease: 'easeOut' }}
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.97 }}
+              className={`flex-1 flex flex-col items-center gap-3 p-5 border-2 transition-all duration-150 cursor-pointer ${
+                typedStyle === id
+                  ? 'border-kp-accent bg-kp-accent/10'
+                  : 'border-kp-text/15 bg-kp-text/5 hover:bg-kp-accent/10 hover:border-kp-accent/50'
+              }`}
+            >
+              <span className="h-10 flex items-center justify-center">{preview}</span>
+              <span className={`text-xs font-medium ${typedStyle === id ? 'text-kp-accent' : 'text-kp-muted'}`}>
+                {label}
+              </span>
+            </motion.button>
           ))}
         </div>
       </div>
@@ -74,84 +195,149 @@ const AppearanceTab = () => {
   );
 };
 
-const AccountTab = () => {
-  const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true';
-  const userData = JSON.parse(sessionStorage.getItem('userData') || 'null');
+const Field = ({ label, status, onSave, children }) => (
+  <div className="flex flex-col gap-2">
+    <h3 className="text-xs font-medium text-kp-muted uppercase tracking-widest">{label}</h3>
+    <div className="flex flex-col gap-2">
+      {children}
+      <div className="flex items-center gap-3">
+        <Button variant="filled" size="sm" onClick={onSave}>
+          <Upload size={13} /> Guardar
+        </Button>
+        {status === 'ok'    && <span className="text-xs text-green-600">Guardado</span>}
+        {status === 'error' && <span className="text-xs text-red-500">No se pudo guardar</span>}
+      </div>
+    </div>
+  </div>
+);
 
-  const [imageURL, setImageURL] = useState('');
-  const [saved, setSaved] = useState(false);
-  const [error, setError] = useState('');
+const useField = (apiKey) => {
+  const [value,  setValue]  = useState('');
+  const [status, setStatus] = useState(null);
+  const userData = JSON.parse(sessionStorage.getItem('userData') || '{}');
 
-  if (!isLoggedIn || !userData) {
-    return (
-      <p className="text-kp-muted text-sm">Debes iniciar sesión para ver las opciones de cuenta.</p>
-    );
-  }
-
-  const handleSaveImage = async () => {
-    if (!imageURL.trim()) return;
+  const save = async (extra = {}) => {
+    if (!value.trim()) return;
     try {
       const response = await axios.put(`${import.meta.env.VITE_API_URL}/user/data`, {
         username: userData.username,
-        imageURL,
+        [apiKey]: value,
+        ...extra,
       });
       if (response.status === 200) {
-        setSaved(true);
-        setError('');
-        setTimeout(() => setSaved(false), 2500);
+        setStatus('ok');
+        if (apiKey === 'username' || apiKey === 'email') {
+          const updated = { ...userData, [apiKey]: value };
+          sessionStorage.setItem('userData', JSON.stringify(updated));
+        }
+        setTimeout(() => setStatus(null), 2500);
       }
-    } catch (e) {
-      setError('No se pudo guardar la imagen.');
-      console.error(e);
+    } catch {
+      setStatus('error');
+      setTimeout(() => setStatus(null), 2500);
+    }
+  };
+
+  return { value, setValue, status, save };
+};
+
+const AccountTab = () => {
+  const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true';
+  const userData   = JSON.parse(sessionStorage.getItem('userData') || 'null');
+
+  const image    = useField('imageURL');
+  const username = useField('username');
+  const email    = useField('email');
+  const [newPass,     setNewPass]     = useState('');
+  const [confirmPass, setConfirmPass] = useState('');
+  const [passStatus,  setPassStatus]  = useState(null);
+
+  if (!isLoggedIn || !userData) {
+    return <p className="text-kp-muted text-sm">Debes iniciar sesión para ver las opciones de cuenta.</p>;
+  }
+
+  const savePassword = async () => {
+    if (!newPass.trim() || newPass !== confirmPass) {
+      setPassStatus('error');
+      setTimeout(() => setPassStatus(null), 2500);
+      return;
+    }
+    try {
+      const res = await axios.put(`${import.meta.env.VITE_API_URL}/user/data`, {
+        username: userData.username,
+        password: newPass,
+      });
+      if (res.status === 200) {
+        setNewPass('');
+        setConfirmPass('');
+        setPassStatus('ok');
+        setTimeout(() => setPassStatus(null), 2500);
+      }
+    } catch {
+      setPassStatus('error');
+      setTimeout(() => setPassStatus(null), 2500);
     }
   };
 
   return (
-    <div className="flex flex-col gap-6 max-w-md">
-      <div>
-        <h3 className="text-sm font-medium text-kp-muted mb-3 uppercase tracking-widest">Imagen de perfil</h3>
-        <div className="flex flex-col gap-3">
-          <Input
-            type="text"
-            placeholder="URL de imagen"
-            value={imageURL}
-            onChange={(e) => setImageURL(e.target.value)}
-          />
-          <div className="flex items-center gap-3">
-            <Button variant="filled" onClick={handleSaveImage}>
-              <FontAwesomeIcon icon={faUpload} /> Guardar
-            </Button>
-            {saved && <span className="text-sm text-green-600">Guardado</span>}
-            {error && <span className="text-sm text-red-500">{error}</span>}
-          </div>
+    <div className="flex flex-col gap-8 max-w-sm">
+
+      <Field label="Imagen de perfil" status={image.status} onSave={image.save}>
+        <Input type="text" placeholder="URL de imagen" value={image.value} onChange={e => image.setValue(e.target.value)} />
+      </Field>
+
+      <Field label="Nombre de usuario" status={username.status} onSave={username.save}>
+        <Input type="text" placeholder={userData.username} value={username.value} onChange={e => username.setValue(e.target.value)} />
+      </Field>
+
+      <Field label="Correo electrónico" status={email.status} onSave={email.save}>
+        <Input type="email" placeholder={userData.email} value={email.value} onChange={e => email.setValue(e.target.value)} />
+      </Field>
+
+      <div className="flex flex-col gap-2">
+        <h3 className="text-xs font-medium text-kp-muted uppercase tracking-widest">Contraseña</h3>
+        <Input type="password" placeholder="Nueva contraseña" value={newPass}     onChange={e => setNewPass(e.target.value)} />
+        <Input type="password" placeholder="Confirmar contraseña" value={confirmPass} onChange={e => setConfirmPass(e.target.value)} />
+        {newPass && confirmPass && newPass !== confirmPass && (
+          <p className="text-xs text-red-500">Las contraseñas no coinciden</p>
+        )}
+        <div className="flex items-center gap-3 mt-1">
+          <Button variant="filled" size="sm" onClick={savePassword}>
+            <Upload size={13} /> Guardar
+          </Button>
+          {passStatus === 'ok'    && <span className="text-xs text-green-600">Contraseña actualizada</span>}
+          {passStatus === 'error' && <span className="text-xs text-red-500">Error al actualizar</span>}
         </div>
       </div>
+
     </div>
   );
 };
 
 const Settings = ({ sound, setSound }) => {
-  const [activeTab, setActiveTab] = useState('appearance');
+  const { state } = useLocation();
+  const [activeTab, setActiveTab] = useState(state?.tab ?? 'appearance');
 
   return (
     <div className="bg-kp-bg text-kp-text w-screen h-screen flex flex-col items-center">
       <Navbar sound={sound} setSound={setSound} />
 
-      <main className="w-full max-w-3xl px-6 pt-8 flex gap-8">
+      <FadeUp className="w-full max-w-3xl px-6 pt-8 flex gap-8">
         {/* Sidebar */}
         <nav className="flex flex-col gap-1 w-40 shrink-0">
           {TABS.map(({ id, label }) => (
             <button
               key={id}
               onClick={() => setActiveTab(id)}
-              className={`relative text-left px-3 py-2 rounded-lg text-sm transition-colors duration-150 ${
-                activeTab === id ? 'text-kp-accent font-medium' : 'text-kp-muted hover:text-kp-text'
+              className={`relative text-left pl-4 pr-3 py-2 text-sm transition-colors duration-150 border-l-2 ${
+                activeTab === id ? 'text-kp-accent font-medium border-kp-accent' : 'text-kp-muted hover:text-kp-text border-transparent'
               }`}
             >
               {activeTab === id && (
                 <motion.span
                   layoutId="settings-tab-indicator"
-                  className="absolute inset-0 bg-kp-accent/10 rounded-lg"
+                  className="absolute inset-0 bg-kp-accent/10"
+                  transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                 />
               )}
               <span className="relative">{label}</span>
@@ -164,10 +350,20 @@ const Settings = ({ sound, setSound }) => {
           <h2 className="text-xl font-medium mb-6 text-kp-text">
             {TABS.find(t => t.id === activeTab)?.label}
           </h2>
-          {activeTab === 'appearance' && <AppearanceTab />}
-          {activeTab === 'account'    && <AccountTab />}
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+            >
+              {activeTab === 'appearance' && <AppearanceTab />}
+              {activeTab === 'account'    && <AccountTab />}
+            </motion.div>
+          </AnimatePresence>
         </div>
-      </main>
+      </FadeUp>
     </div>
   );
 };

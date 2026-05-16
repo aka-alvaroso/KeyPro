@@ -2,11 +2,11 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
+import { ExternalLink } from 'lucide-react';
 
 import Navbar from '../components/Navbar/Navbar';
 import Button from '../components/ui/Button';
+import FadeUp from '../components/ui/FadeUp';
 
 const ORDER_OPTIONS = [
   { key: 'bestScore',    label: 'Mejor puntuación' },
@@ -38,14 +38,16 @@ const Rankings = ({ sound, setSound }) => {
   const currentUsername = (JSON.parse(sessionStorage.getItem('userData') || 'null') ?? {}).username;
 
   return (
-    <div className="h-screen bg-kp-bg text-kp-text w-screen flex flex-col items-center gap-4">
+    <div className="h-screen bg-kp-bg text-kp-text w-screen flex flex-col items-center">
       <Navbar sound={sound} setSound={setSound} />
 
-      <h1 className="text-2xl font-medium text-kp-text">Rankings</h1>
+      <FadeUp className="w-full max-w-4xl px-6 pt-8 flex flex-col gap-6">
+        <div>
+          <p className="text-xs text-kp-muted uppercase tracking-widest mb-1">Clasificación global</p>
+          <h1 className="text-2xl font-medium text-kp-text">Rankings</h1>
+        </div>
 
-      <section className="bg-kp-surface border border-kp-border rounded-xl p-4">
-        <p className="text-xs text-kp-muted text-center mb-3">Ordenar por</p>
-        <div className="flex flex-wrap gap-2 justify-center">
+        <div className="border-b border-kp-border pb-4 flex flex-wrap gap-2">
           {ORDER_OPTIONS.map(({ key, label }) => (
             <Button
               key={key}
@@ -57,41 +59,41 @@ const Rankings = ({ sound, setSound }) => {
             </Button>
           ))}
         </div>
-      </section>
 
-      {ranking.length > 0 ? (
-        <section className="max-h-[55vh] w-3/5 bg-kp-surface border border-kp-border rounded-xl overflow-y-auto mb-8">
-          <div className="sticky top-0 bg-kp-surface border-b border-kp-border w-full flex px-4 py-3">
-            {COL_HEADERS.map(h => (
-              <p key={h} className="w-[12.5%] text-xs font-medium uppercase text-kp-accent">{h}</p>
-            ))}
-          </div>
-          <div className="flex flex-col">
-            {ranking.map((user, index) => (
-              <div
-                key={index}
-                className={`w-full flex items-center px-4 py-3 text-sm transition-colors
-                  ${index % 2 === 0 ? 'bg-kp-border/10' : ''}
-                  ${user.username === currentUsername ? 'text-kp-accent' : 'text-kp-text'}`}
-              >
-                <p className="w-[12.5%] text-kp-muted">#{index + 1}</p>
-                <Link to={`/profile/${user.username}`} className="w-[12.5%] hover:underline flex items-center gap-1">
-                  {user.username}
-                  <FontAwesomeIcon className="text-xs" icon={faArrowUpRightFromSquare} />
-                </Link>
-                <p className="w-[12.5%]">{user.bestScore}</p>
-                <p className="w-[12.5%]">{user.bestSpeed}</p>
-                <p className="w-[12.5%]">{user.avgScore}</p>
-                <p className="w-[12.5%]">{user.avgSpeed}</p>
-                <p className="w-[12.5%]">{user.avgAccuracy}</p>
-                <p className="w-[12.5%]">{user.totalTests}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      ) : (
-        <p className="text-kp-muted">No hay datos</p>
-      )}
+        {ranking.length > 0 ? (
+          <section className="max-h-[55vh] bg-kp-surface border border-kp-border overflow-y-auto mb-8">
+            <div className="sticky top-0 bg-kp-surface border-b border-kp-border w-full flex px-4 py-3">
+              {COL_HEADERS.map(h => (
+                <p key={h} className="w-[12.5%] text-xs font-medium uppercase text-kp-accent">{h}</p>
+              ))}
+            </div>
+            <div className="flex flex-col">
+              {ranking.map((user, index) => (
+                <div
+                  key={index}
+                  className={`w-full flex items-center px-4 py-3 text-sm transition-colors
+                    ${index % 2 === 0 ? 'bg-kp-border/10' : ''}
+                    ${user.username === currentUsername ? 'text-kp-accent' : 'text-kp-text'}`}
+                >
+                  <p className="w-[12.5%] text-kp-muted">#{index + 1}</p>
+                  <Link to={`/profile/${user.username}`} className="w-[12.5%] hover:underline flex items-center gap-1">
+                    {user.username}
+                    <ExternalLink size={12} />
+                  </Link>
+                  <p className="w-[12.5%]">{user.bestScore}</p>
+                  <p className="w-[12.5%]">{user.bestSpeed}</p>
+                  <p className="w-[12.5%]">{user.avgScore}</p>
+                  <p className="w-[12.5%]">{user.avgSpeed}</p>
+                  <p className="w-[12.5%]">{user.avgAccuracy}</p>
+                  <p className="w-[12.5%]">{user.totalTests}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : (
+          <p className="text-kp-muted">No hay datos</p>
+        )}
+      </FadeUp>
     </div>
   );
 };

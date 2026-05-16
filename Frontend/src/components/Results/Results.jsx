@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRightArrowLeft, faCheck, faWarning } from '@fortawesome/free-solid-svg-icons';
+import { ArrowLeftRight, Check, AlertTriangle } from 'lucide-react';
 import StatCard from '../ui/StatCard';
 
 const Results = ({ results, areResultsSaved }) => {
@@ -12,20 +11,20 @@ const Results = ({ results, areResultsSaved }) => {
   return (
     <>
       {areResultsSaved.user && areResultsSaved.test ? (
-        <div className="my-4 flex items-center gap-3 py-2 px-6 rounded-xl border-2 border-green-500/50 bg-green-50 text-green-700 text-sm">
-          <FontAwesomeIcon icon={faCheck} />
+        <div className="my-4 flex items-center gap-3 py-2 px-6 border border-green-500/50 bg-green-50 text-green-700 text-sm">
+          <Check size={14} />
           <span>Resultados guardados correctamente</span>
-          <FontAwesomeIcon icon={faCheck} />
+          <Check size={14} />
         </div>
       ) : (
-        <div className="my-4 flex items-center gap-3 py-2 px-6 rounded-xl border-2 border-kp-accent/50 bg-kp-accent/10 text-kp-text text-sm">
-          <FontAwesomeIcon icon={faWarning} className="text-kp-accent" />
+        <div className="my-4 flex items-center gap-3 py-2 px-6 border border-kp-accent/50 bg-kp-accent/10 text-kp-text text-sm">
+          <AlertTriangle size={14} className="text-kp-accent" />
           <span>Inicia sesión para guardar los resultados</span>
-          <FontAwesomeIcon icon={faWarning} className="text-kp-accent" />
+          <AlertTriangle size={14} className="text-kp-accent" />
         </div>
       )}
 
-      <p className="font-medium text-2xl text-left w-4/6 text-kp-text">Resultados</p>
+      <p className="text-xs text-kp-muted uppercase tracking-widest w-4/6">Resultados</p>
       <div className="mt-4 w-4/6 grid grid-cols-3 gap-3">
         <StatCard label="Puntuación" value={results.score} unit="pts." />
 
@@ -34,11 +33,11 @@ const Results = ({ results, areResultsSaved }) => {
             onClick={() => setVelocityType(velocityType === 'ppm' ? 'cpm' : 'ppm')}
             className="absolute top-3 right-3 text-kp-muted hover:text-kp-accent transition-colors"
           >
-            <FontAwesomeIcon icon={faArrowRightArrowLeft} className="text-xs" />
+            <ArrowLeftRight size={12} />
           </button>
-          <p className="text-center text-6xl font-medium text-kp-text">
+          <p className="text-center text-4xl font-medium text-kp-text">
             {velocityType === 'ppm' ? results.ppm : results.cpm}
-            <span className="text-xl font-medium text-kp-accent ml-1">{velocityType.toUpperCase()}</span>
+            <span className="text-lg font-medium text-kp-accent ml-1">{velocityType.toUpperCase()}</span>
           </p>
         </StatCard>
 

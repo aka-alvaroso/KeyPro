@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 const Input = ({ className = '', ...props }) => (
   <input
     className={`
-      w-full bg-transparent text-kp-text placeholder:text-kp-muted
-      border-b-2 border-kp-border focus:border-kp-accent
-      py-1 focus:outline-none transition-colors duration-150
+      w-full bg-kp-text/6 text-kp-text placeholder:text-kp-muted
+      border-0 px-3 py-2.5 focus:outline-none focus:bg-kp-text/10
+      transition-colors duration-150
       ${className}
     `}
     {...props}

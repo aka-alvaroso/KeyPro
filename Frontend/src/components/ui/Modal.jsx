@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faX } from '@fortawesome/free-solid-svg-icons';
+import { X } from 'lucide-react';
 
 const Modal = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
@@ -12,7 +11,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-1/3 max-h-[80vh] bg-kp-bg border-2 border-kp-border rounded-xl overflow-y-auto shadow-xl"
+        className="relative w-1/3 max-h-[80vh] bg-kp-bg border border-kp-border overflow-y-auto shadow-xl"
       >
         <div className="flex justify-between items-center px-8 py-6 border-b border-kp-border">
           <h2 className="text-2xl font-medium text-kp-text">{title}</h2>
@@ -20,7 +19,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
             onClick={onClose}
             className="text-kp-muted hover:text-kp-text transition-colors"
           >
-            <FontAwesomeIcon icon={faX} />
+            <X size={16} />
           </button>
         </div>
         <div className="px-8 py-6">

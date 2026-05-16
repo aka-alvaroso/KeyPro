@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 
 const StatCard = ({ label, value, unit, children, className = '' }) => (
-  <section className={`rounded-xl p-3 border-2 border-kp-border bg-kp-bg ${className}`}>
-    <p className="text-kp-muted text-sm mb-1">{label}</p>
+  <section className={`p-4 border border-kp-border bg-kp-surface ${className}`}>
+    <p className="text-xs text-kp-muted uppercase tracking-widest mb-2">{label}</p>
     {children ?? (
-      <p className="text-center text-6xl font-medium text-kp-text">
+      <p className="text-center text-4xl font-medium text-kp-text">
         {value}
-        {unit && <span className="text-xl font-medium text-kp-accent ml-1">{unit}</span>}
+        {unit && <span className="text-lg font-medium text-kp-accent ml-1">{unit}</span>}
       </p>
     )}
   </section>

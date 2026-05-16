@@ -3,71 +3,48 @@ import { motion } from 'framer-motion';
 import { useTypingGame } from '../../hooks/useTypingGame';
 import { useSettings } from '../../context/SettingsContext';
 
-const ACCENT = 'rgba(8,98,243,';
-const T = { duration: 1.4, repeat: Infinity, ease: 'easeInOut' };
-
-const CursorChar = ({ char, style }) => {
-  if (style === 'underline') {
-    return (
-      <motion.span
-        className="text-kp-accent"
-        animate={{ boxShadow: [`inset 0 -3px 0 ${ACCENT}1)`, `inset 0 -3px 0 ${ACCENT}0.08)`, `inset 0 -3px 0 ${ACCENT}1)`] }}
-        transition={T}
-      >
-        {char}
-      </motion.span>
-    );
-  }
-
-  if (style === 'line') {
-    return (
-      <motion.span
-        className="text-kp-muted"
-        animate={{ boxShadow: [`-3px 0 0 ${ACCENT}1)`, `-3px 0 0 ${ACCENT}0.08)`, `-3px 0 0 ${ACCENT}1)`] }}
-        transition={T}
-      >
-        {char}
-      </motion.span>
-    );
-  }
-
-  // block
-  return (
-    <motion.span
-      className="text-kp-text rounded-sm"
-      animate={{ backgroundColor: [`${ACCENT}0.22)`, `${ACCENT}0.03)`, `${ACCENT}0.22)`] }}
-      transition={T}
-    >
-      {char}
-    </motion.span>
-  );
-};
-
-CursorChar.propTypes = {
-  char: PropTypes.string.isRequired,
-  style: PropTypes.string.isRequired,
-};
+const SPRING = { type: 'spring', stiffness: 340, damping: 28 };
 
 const TypingArea = ({ settings, sound, timeRemaining, onStart, onFinish, setAreResultsSaved }) => {
-  const { cursorStyle } = useSettings();
+  const { cursorStyle, typedStyle } = useSettings();
   const { text, cursor, charResults } = useTypingGame({
     settings, sound, timeRemaining, onStart, onFinish, setAreResultsSaved,
   });
 
   return text.split('').map((char, index) => {
-    if (index === cursor) {
-      return <CursorChar key={index} char={char} style={cursorStyle} />;
+    const isCursor = index === cursor;
+    const result   = charResults[index];
+    const delay    = Math.min(index * 0.006, 0.5);
+
+    let className = '';
+
+    if (isCursor) {
+      className =
+        cursorStyle === 'underline' ? 'text-kp-accent kp-cursor-underline'     :
+        cursorStyle === 'line'      ? 'text-kp-muted kp-cursor-line'           :
+                                     'text-kp-text rounded-sm kp-cursor-block' ;
+    } else if (result) {
+      const correct = result === 'correct';
+      const textCls = correct ? 'text-kp-text/70' : 'text-red-500';
+      const bgCls   =
+        typedStyle === 'background' ? (correct ? 'bg-kp-accent/10 rounded-sm' : 'bg-red-500/10 rounded-sm') :
+        typedStyle === 'underline'  ? 'underline' : '';
+      className = `${textCls} ${bgCls}`;
+    } else {
+      className = 'text-kp-muted';
     }
 
-    if (charResults[index]) {
-      return (
-        <span key={index} className={charResults[index] === 'correct' ? 'text-kp-text/70' : 'text-red-500'}>
-          {char}
-        </span>
-      );
-    }
-
-    return <span key={index} className="text-kp-muted">{char}</span>;
+    return (
+      <motion.span
+        key={`${text.slice(0, 6)}-${index}`}
+        className={className}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ ...SPRING, delay }}
+      >
+        {char}
+      </motion.span>
+    );
   });
 };
 

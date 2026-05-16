@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUpload } from '@fortawesome/free-solid-svg-icons';
+import { Upload } from 'lucide-react';
 import Modal from '../ui/Modal';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
@@ -33,7 +32,7 @@ const EditProfileModal = ({ isOpen, setIsOpen, userData, setUserData }) => (
           }
         }}
       >
-        <FontAwesomeIcon icon={faUpload} /> Guardar cambios
+        <Upload size={14} /> Guardar cambios
       </Button>
     </div>
   </Modal>

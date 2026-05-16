@@ -9,15 +9,20 @@ const load = (key, fallback) => {
 };
 
 export const SettingsProvider = ({ children }) => {
-  const [cursorStyle, setCursorStyleRaw] = useState(() => load('kp-cursor', 'underline'));
+  const [cursorStyle,   setCursorStyleRaw]   = useState(() => load('kp-cursor',  'underline'));
+  const [typedStyle,    setTypedStyleRaw]    = useState(() => load('kp-typed',   'background'));
+  const [timerDisplay,  setTimerDisplayRaw]  = useState(() => load('kp-timer',   'bar'));
 
-  const setCursorStyle = (value) => {
-    localStorage.setItem('kp-cursor', JSON.stringify(value));
-    setCursorStyleRaw(value);
-  };
+  const setCursorStyle  = (v) => { localStorage.setItem('kp-cursor', JSON.stringify(v));  setCursorStyleRaw(v);  };
+  const setTypedStyle   = (v) => { localStorage.setItem('kp-typed',  JSON.stringify(v));  setTypedStyleRaw(v);   };
+  const setTimerDisplay = (v) => { localStorage.setItem('kp-timer',  JSON.stringify(v));  setTimerDisplayRaw(v); };
 
   return (
-    <SettingsContext.Provider value={{ cursorStyle, setCursorStyle }}>
+    <SettingsContext.Provider value={{
+      cursorStyle, setCursorStyle,
+      typedStyle,  setTypedStyle,
+      timerDisplay, setTimerDisplay,
+    }}>
       {children}
     </SettingsContext.Provider>
   );
