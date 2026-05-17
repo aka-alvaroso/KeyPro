@@ -1,56 +1,50 @@
 import PropTypes from 'prop-types';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Keyboard, Clock, Globe, Code2, ChevronDown, BarChart2, AlignLeft } from 'lucide-react';
 
-// ── Chip ─────────────────────────────────────────────────────────────────────
-const Chip = ({ icon, children, onClick, arrow = false }) => (
+// ── Chip ──────────────────────────────────────────────────────────────────────
+const Chip = ({ icon, label, open, onClick }) => (
   <button
     onClick={onClick}
     onMouseDown={e => e.preventDefault()}
-    className="flex items-center gap-1.5 bg-kp-surface border border-kp-border px-3 py-1.5 text-sm text-kp-muted hover:border-kp-accent hover:text-kp-accent transition-all duration-150 cursor-pointer select-none"
+    className={`flex items-center gap-1.5 bg-kp-surface border px-3 py-1.5 text-sm transition-all duration-150 cursor-pointer select-none ${
+      open
+        ? 'border-kp-accent text-kp-accent'
+        : 'border-kp-border text-kp-muted hover:border-kp-accent hover:text-kp-accent'
+    }`}
   >
     <span className="text-kp-accent">{icon}</span>
-    <span>{children}</span>
-    {arrow && <ChevronDown size={12} className="text-kp-muted ml-0.5" />}
+    <span>{label}</span>
+    <ChevronDown
+      size={12}
+      className={`ml-0.5 transition-transform duration-150 ${open ? 'rotate-180' : ''}`}
+    />
   </button>
 );
 
 // ── Popover ───────────────────────────────────────────────────────────────────
-const TEXT_LANGS = [['es', 'Español'], ['en', 'English']];
-const CODE_LANGS = [['python', 'Python'], ['javascript', 'JavaScript'], ['c++', 'C++'], ['html', 'HTML'], ['java', 'Java']];
-
-const TypePopover = ({ type, lang, onSelect }) => (
+const Popover = ({ children }) => (
   <motion.div
     initial={{ opacity: 0, y: -6, scale: 0.97 }}
     animate={{ opacity: 1, y: 0, scale: 1 }}
     exit={{ opacity: 0, y: -6, scale: 0.97 }}
     transition={{ duration: 0.15, ease: 'easeOut' }}
-    className="absolute top-full left-0 mt-2 bg-kp-bg border border-kp-border shadow-lg p-3 z-50 min-w-44"
+    className="absolute top-full left-0 mt-2 bg-kp-bg border border-kp-border shadow-lg p-1.5 z-50 min-w-36"
   >
-    <p className="text-xs text-kp-muted uppercase tracking-wider mb-1.5">Texto</p>
-    {TEXT_LANGS.map(([l, label]) => (
-      <PopoverItem key={l} active={type === 'text' && lang === l} onClick={() => onSelect('text', l)}>
-        {label}
-      </PopoverItem>
-    ))}
-
-    <div className="border-t border-kp-border my-2" />
-
-    <p className="text-xs text-kp-muted uppercase tracking-wider mb-1.5">Código</p>
-    {CODE_LANGS.map(([l, label]) => (
-      <PopoverItem key={l} active={type === 'code' && lang === l} onClick={() => onSelect('code', l)}>
-        {label}
-      </PopoverItem>
-    ))}
+    {children}
   </motion.div>
+);
+
+const PopoverSection = ({ label }) => (
+  <p className="text-xs text-kp-muted uppercase tracking-wider px-2 pt-2 pb-1">{label}</p>
 );
 
 const PopoverItem = ({ children, active, onClick }) => (
   <button
     onClick={onClick}
     onMouseDown={e => e.preventDefault()}
-    className={`w-full text-left flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm transition-colors duration-100 ${
+    className={`w-full text-left flex items-center gap-2 px-2 py-1.5 text-sm transition-colors duration-100 ${
       active ? 'text-kp-accent bg-kp-accent/8 font-medium' : 'text-kp-text hover:bg-kp-surface'
     }`}
   >
@@ -59,21 +53,56 @@ const PopoverItem = ({ children, active, onClick }) => (
   </button>
 );
 
-// ── GameSelector ──────────────────────────────────────────────────────────────
-const MODES        = ['practice', 'timed'];
-const DIFFICULTIES = ['easy', 'medium', 'hard'];
-const LENGTHS      = ['short', 'medium', 'long'];
-const TIMES        = [30, 60, 120];
+// ── usePopover ────────────────────────────────────────────────────────────────
+function usePopover() {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
 
-const MODE_LABEL = { practice: 'Práctica', timed: 'Cronómetro' };
-const DIFF_LABEL = { easy: 'Fácil', medium: 'Medio', hard: 'Difícil' };
-const LEN_LABEL  = { short: 'Corto', medium: 'Medio', long: 'Largo' };
-const TEXT_LABEL = { es: 'Español', en: 'English' };
-const CODE_LABEL = { python: 'Python', javascript: 'JavaScript', 'c++': 'C++', html: 'HTML', java: 'Java' };
+  const close = useCallback((e) => {
+    if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+  }, []);
+  const closeKey = useCallback(() => setOpen(false), []);
 
-function cycle(arr, current) {
-  return arr[(arr.indexOf(current) + 1) % arr.length];
+  useEffect(() => {
+    document.addEventListener('mousedown', close);
+    document.addEventListener('keydown', closeKey);
+    return () => {
+      document.removeEventListener('mousedown', close);
+      document.removeEventListener('keydown', closeKey);
+    };
+  }, [close, closeKey]);
+
+  return { open, setOpen, ref };
 }
+
+// ── GameSelector ──────────────────────────────────────────────────────────────
+const MODE_OPTIONS = [
+  { value: 'practice', label: 'Práctica' },
+  { value: 'timed',    label: 'Cronómetro' },
+];
+const DIFF_OPTIONS = [
+  { value: 'easy',   label: 'Fácil' },
+  { value: 'medium', label: 'Medio' },
+  { value: 'hard',   label: 'Difícil' },
+];
+const LEN_OPTIONS = [
+  { value: 'short',  label: 'Corto' },
+  { value: 'medium', label: 'Medio' },
+  { value: 'long',   label: 'Largo' },
+];
+const TIME_OPTIONS = [
+  { value: 30,  label: '30 s' },
+  { value: 60,  label: '60 s' },
+  { value: 120, label: '120 s' },
+];
+const TEXT_LANGS = [{ value: 'es', label: 'Español' }, { value: 'en', label: 'English' }];
+const CODE_LANGS = [
+  { value: 'python',     label: 'Python' },
+  { value: 'javascript', label: 'JavaScript' },
+  { value: 'c++',        label: 'C++' },
+  { value: 'html',       label: 'HTML' },
+  { value: 'java',       label: 'Java' },
+];
 
 const GameSelector = ({ setGameSettings }) => {
   const [mode,       setMode]       = useState('practice');
@@ -82,90 +111,126 @@ const GameSelector = ({ setGameSettings }) => {
   const [difficulty, setDifficulty] = useState('easy');
   const [length,     setLength]     = useState('medium');
   const [time,       setTime]       = useState(60);
-  const [popover,    setPopover]    = useState(false);
 
-  const popoverRef = useRef(null);
+  const modeP = usePopover();
+  const timeP = usePopover();
+  const typeP = usePopover();
+  const diffP = usePopover();
+  const lenP  = usePopover();
 
-  useEffect(() => {
-    const close = (e) => {
-      if (popoverRef.current && !popoverRef.current.contains(e.target)) setPopover(false);
-    };
-    const closeOnKey = () => setPopover(false);
-    document.addEventListener('mousedown', close);
-    document.addEventListener('keydown', closeOnKey);
-    return () => {
-      document.removeEventListener('mousedown', close);
-      document.removeEventListener('keydown', closeOnKey);
-    };
-  }, []);
-
-  const cycleMode = () => {
-    const next = cycle(MODES, mode);
-    setMode(next);
-    setGameSettings(p => ({ ...p, mode: next }));
+  const pick = (setter, key, value, closePopover) => {
+    setter(value);
+    setGameSettings(p => ({ ...p, [key]: value }));
+    closePopover(false);
   };
 
-  const cycleDiff = () => {
-    const next = cycle(DIFFICULTIES, difficulty);
-    setDifficulty(next);
-    setGameSettings(p => ({ ...p, difficulty: next }));
-  };
-
-  const cycleLength = () => {
-    const next = cycle(LENGTHS, length);
-    setLength(next);
-    setGameSettings(p => ({ ...p, length: next }));
-  };
-
-  const cycleTime = () => {
-    const next = cycle(TIMES, time);
-    setTime(next);
-    setGameSettings(p => ({ ...p, time: next }));
-  };
-
-  const selectTypeLang = (t, l) => {
-    setType(t);
-    setLang(l);
-    setPopover(false);
+  const pickTypeLang = (t, l) => {
+    setType(t); setLang(l);
     setGameSettings(p => ({ ...p, type: t, language: l }));
+    typeP.setOpen(false);
   };
 
-  const typeLangLabel = type === 'text' ? TEXT_LABEL[lang] : CODE_LABEL[lang];
+  const modeLabel = MODE_OPTIONS.find(o => o.value === mode)?.label;
+  const diffLabel = DIFF_OPTIONS.find(o => o.value === difficulty)?.label;
+  const lenLabel  = LEN_OPTIONS.find(o => o.value === length)?.label;
+  const timeLabel = `${time} s`;
+  const typeLabel = type === 'text'
+    ? TEXT_LANGS.find(o => o.value === lang)?.label
+    : CODE_LANGS.find(o => o.value === lang)?.label;
 
   return (
     <div className="flex flex-wrap gap-2 justify-center items-center">
-      <Chip icon={<Keyboard size={14} />} onClick={cycleMode}>
-        {MODE_LABEL[mode]}
-      </Chip>
 
-      {mode === 'timed' && (
-        <Chip icon={<Clock size={14} />} onClick={cycleTime}>
-          {time}s
-        </Chip>
-      )}
-
-      <div className="relative" ref={popoverRef}>
-        <Chip
-          icon={type === 'text' ? <Globe size={14} /> : <Code2 size={14} />}
-          arrow
-          onClick={() => setPopover(v => !v)}
-        >
-          {typeLangLabel}
-        </Chip>
+      {/* Modo */}
+      <div className="relative" ref={modeP.ref}>
+        <Chip icon={<Keyboard size={14} />} label={modeLabel} open={modeP.open} onClick={() => modeP.setOpen(v => !v)} />
         <AnimatePresence>
-          {popover && (
-            <TypePopover type={type} lang={lang} onSelect={selectTypeLang} />
+          {modeP.open && (
+            <Popover>
+              {MODE_OPTIONS.map(o => (
+                <PopoverItem key={o.value} active={mode === o.value} onClick={() => pick(setMode, 'mode', o.value, modeP.setOpen)}>
+                  {o.label}
+                </PopoverItem>
+              ))}
+            </Popover>
           )}
         </AnimatePresence>
       </div>
 
-      <Chip icon={<BarChart2 size={14} />} onClick={cycleDiff}>
-        {DIFF_LABEL[difficulty]}
-      </Chip>
+      {/* Tiempo (solo en modo cronómetro) */}
+      {mode === 'timed' && (
+        <div className="relative" ref={timeP.ref}>
+          <Chip icon={<Clock size={14} />} label={timeLabel} open={timeP.open} onClick={() => timeP.setOpen(v => !v)} />
+          <AnimatePresence>
+            {timeP.open && (
+              <Popover>
+                {TIME_OPTIONS.map(o => (
+                  <PopoverItem key={o.value} active={time === o.value} onClick={() => pick(setTime, 'time', o.value, timeP.setOpen)}>
+                    {o.label}
+                  </PopoverItem>
+                ))}
+              </Popover>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
 
-      <Chip icon={<AlignLeft size={14} />} onClick={cycleLength}>
-        {LEN_LABEL[length]}
-      </Chip>
+      {/* Tipo + Idioma */}
+      <div className="relative" ref={typeP.ref}>
+        <Chip icon={type === 'text' ? <Globe size={14} /> : <Code2 size={14} />} label={typeLabel} open={typeP.open} onClick={() => typeP.setOpen(v => !v)} />
+        <AnimatePresence>
+          {typeP.open && (
+            <Popover>
+              <PopoverSection label="Texto" />
+              {TEXT_LANGS.map(o => (
+                <PopoverItem key={o.value} active={type === 'text' && lang === o.value} onClick={() => pickTypeLang('text', o.value)}>
+                  {o.label}
+                </PopoverItem>
+              ))}
+              <div className="border-t border-kp-border my-1" />
+              <PopoverSection label="Código" />
+              {CODE_LANGS.map(o => (
+                <PopoverItem key={o.value} active={type === 'code' && lang === o.value} onClick={() => pickTypeLang('code', o.value)}>
+                  {o.label}
+                </PopoverItem>
+              ))}
+            </Popover>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Dificultad */}
+      <div className="relative" ref={diffP.ref}>
+        <Chip icon={<BarChart2 size={14} />} label={diffLabel} open={diffP.open} onClick={() => diffP.setOpen(v => !v)} />
+        <AnimatePresence>
+          {diffP.open && (
+            <Popover>
+              {DIFF_OPTIONS.map(o => (
+                <PopoverItem key={o.value} active={difficulty === o.value} onClick={() => pick(setDifficulty, 'difficulty', o.value, diffP.setOpen)}>
+                  {o.label}
+                </PopoverItem>
+              ))}
+            </Popover>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Longitud */}
+      <div className="relative" ref={lenP.ref}>
+        <Chip icon={<AlignLeft size={14} />} label={lenLabel} open={lenP.open} onClick={() => lenP.setOpen(v => !v)} />
+        <AnimatePresence>
+          {lenP.open && (
+            <Popover>
+              {LEN_OPTIONS.map(o => (
+                <PopoverItem key={o.value} active={length === o.value} onClick={() => pick(setLength, 'length', o.value, lenP.setOpen)}>
+                  {o.label}
+                </PopoverItem>
+              ))}
+            </Popover>
+          )}
+        </AnimatePresence>
+      </div>
+
     </div>
   );
 };
@@ -175,23 +240,21 @@ GameSelector.propTypes = {
   setGameSettings: PropTypes.func,
 };
 
+Chip.propTypes = {
+  icon: PropTypes.node.isRequired,
+  label: PropTypes.string,
+  open: PropTypes.bool,
+  onClick: PropTypes.func.isRequired,
+};
+
+Popover.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
 PopoverItem.propTypes = {
   children: PropTypes.node.isRequired,
   active: PropTypes.bool,
   onClick: PropTypes.func,
-};
-
-TypePopover.propTypes = {
-  type: PropTypes.string.isRequired,
-  lang: PropTypes.string.isRequired,
-  onSelect: PropTypes.func.isRequired,
-};
-
-Chip.propTypes = {
-  icon: PropTypes.node.isRequired,
-  children: PropTypes.node.isRequired,
-  onClick: PropTypes.func.isRequired,
-  arrow: PropTypes.bool,
 };
 
 export default GameSelector;
