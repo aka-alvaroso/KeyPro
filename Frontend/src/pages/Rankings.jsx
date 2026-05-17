@@ -1,206 +1,106 @@
-// src/pages/Rankings.jsx
-import axios from "axios";
+import axios from 'axios';
+import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ExternalLink } from 'lucide-react';
 
-import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
-import { useTheme } from "../context/ThemeContext";
+import Navbar from '../components/Navbar/Navbar';
+import Button from '../components/ui/Button';
+import FadeUp from '../components/ui/FadeUp';
 
-import Navbar from "../components/Navbar/Navbar";
-import ThemeModal from "../components/ThemeModal/ThemeModal";
-import { Link } from "react-router-dom";
-import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+const ORDER_OPTIONS = [
+  { key: 'bestScore',    label: 'Mejor puntuación' },
+  { key: 'bestSpeed',    label: 'Mejor velocidad' },
+  { key: 'avgScore',     label: 'Puntuación media' },
+  { key: 'avgSpeed',     label: 'Velocidad media' },
+  { key: 'avgAccuracy',  label: 'Precisión media' },
+  { key: 'totalTests',   label: 'Tests jugados' },
+];
 
-const Rankings = ({
-  sound,
-  setSound,
-  themeModalIsOpen,
-  setThemeModalIsOpen,
-}) => {
-  const { theme, setTheme } = useTheme();
+const COL_HEADERS = ['#', 'Usuario', 'Mejor pts.', 'Mejor vel.', 'Media pts.', 'Media vel.', 'Precisión', 'Tests'];
 
+const Rankings = ({ sound, setSound }) => {
   const [ranking, setRanking] = useState([]);
-  const [orderBy, setOrderBy] = useState("bestScore"); // bestScore, bestSpeed, avgScore, avgSpeed, avgAccuracy, totalTests
+  const [orderBy, setOrderBy] = useState('bestScore');
 
   useEffect(() => {
-    const fetchHistory = async () => {
+    const fetchRanking = async () => {
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/ranking/${orderBy}`
-        );
-
-        if (response.status !== 200) {
-          console.error("Error al obtener el ranking:", response);
-          return;
-        }
-        setRanking(response.data);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/ranking/${orderBy}`);
+        if (response.status === 200) setRanking(response.data);
       } catch (e) {
-        console.error("Error al obtener el ranking:", e);
+        console.error('Error al obtener el ranking:', e);
       }
     };
-
-    fetchHistory();
+    fetchRanking();
   }, [orderBy]);
 
+  const currentUsername = (JSON.parse(sessionStorage.getItem('userData') || 'null') ?? {}).username;
+
   return (
-    <div
-      className={`h-screen bg-${theme}-background text-${theme}-text w-screen flex flex-col items-center gap-4`}
-    >
-      {/* Navbar */}
-      <Navbar
-        sound={sound}
-        setSound={setSound}
-        setThemeModalIsOpen={setThemeModalIsOpen}
-      />
+    <div className="h-screen bg-kp-bg text-kp-text w-screen flex flex-col items-center">
+      <Navbar sound={sound} setSound={setSound} />
 
-      <h1 className={`text-3xl text-${theme}-text h-16`}>Rankings</h1>
-
-      <section
-        className={`max-w-7xl bg-${theme}-primary bg-opacity-20 text-${theme}-text p-4 rounded-lg`}
-      >
-        <h3 className="text-lg text-center">Ordenar por:</h3>
-
-        <div className="flex flex-wrap gap-4 justify-center">
-          <button
-            className={`${
-              orderBy === "bestScore"
-                ? "bg-opacity-50 bg-" + theme + "-primary"
-                : "bg-opacity-20"
-            } text-center text-sm text-white rounded-lg py-2 px-4 hover:bg-opacity-10 hover:bg-${theme}-primary`}
-            onClick={() => setOrderBy("bestScore")}
-          >
-            Mejor puntuación
-          </button>
-          <button
-            className={`${
-              orderBy === "bestSpeed"
-                ? "bg-opacity-50 bg-" + theme + "-primary"
-                : "bg-opacity-20"
-            } text-center text-sm text-white rounded-lg py-2 px-4 hover:bg-opacity-10 hover:bg-${theme}-primary`}
-            onClick={() => setOrderBy("bestSpeed")}
-          >
-            Mejor velocidad
-          </button>
-          <button
-            className={`${
-              orderBy === "avgScore"
-                ? "bg-opacity-50 bg-" + theme + "-primary"
-                : "bg-opacity-20"
-            } text-center text-sm text-white rounded-lg py-2 px-4 hover:bg-opacity-10 hover:bg-${theme}-primary`}
-            onClick={() => setOrderBy("avgScore")}
-          >
-            Puntuación media
-          </button>
-          <button
-            className={`${
-              orderBy === "avgSpeed"
-                ? "bg-opacity-50 bg-" + theme + "-primary"
-                : "bg-opacity-20"
-            } text-center text-sm text-white rounded-lg py-2 px-4 hover:bg-opacity-10 hover:bg-${theme}-primary`}
-            onClick={() => setOrderBy("avgSpeed")}
-          >
-            Velocidad media
-          </button>
-          <button
-            className={`${
-              orderBy === "avgAccuracy"
-                ? "bg-opacity-50 bg-" + theme + "-primary"
-                : "bg-opacity-20"
-            } text-center text-sm text-white rounded-lg py-2 px-4 hover:bg-opacity-10 hover:bg-${theme}-primary`}
-            onClick={() => setOrderBy("avgAccuracy")}
-          >
-            Precisión media
-          </button>
-          <button
-            className={`${
-              orderBy === "totalTests"
-                ? "bg-opacity-50 bg-" + theme + "-primary"
-                : "bg-opacity-20"
-            } text-center text-sm text-white rounded-lg py-2 px-4 hover:bg-opacity-10 hover:bg-${theme}-primary`}
-            onClick={() => setOrderBy("totalTests")}
-          >
-            Tests jugados
-          </button>
+      <FadeUp className="w-full max-w-4xl px-6 pt-8 flex flex-col gap-6">
+        <div>
+          <p className="text-xs text-kp-muted uppercase tracking-widest mb-1">Clasificación global</p>
+          <h1 className="text-2xl font-medium text-kp-text">Rankings</h1>
         </div>
-      </section>
 
-      {ranking.length > 0 ? (
-        <section
-          className={`max-h-[65vh] w-3/5 flex flex-wrap items-center justify-center bg-${theme}-primary bg-opacity-5 p-4 border-2 border-${theme}-primary rounded-lg gap-4 mb-28 overflow-y-auto`}
-        >
-          <div
-            className={`w-full text-md text-center font-bold flex uppercase text-${theme}-primary`}
-          >
-            <p className="w-[12.5%]">Posición</p>
-            <p className="w-[12.5%]">Usuario</p>
-            <p className="w-[12.5%]">Mejor puntuación</p>
-            <p className="w-[12.5%]">Mejor velocidad</p>
-            <p className="w-[12.5%]">Puntuación media</p>
-            <p className="w-[12.5%]">Velocidad media</p>
-            <p className="w-[12.5%]">Precisión media</p>
-            <p className="w-[12.5%]">Tests jugados</p>
-          </div>
+        <div className="border-b border-kp-border pb-4 flex flex-wrap gap-2">
+          {ORDER_OPTIONS.map(({ key, label }) => (
+            <Button
+              key={key}
+              variant={orderBy === key ? 'filled' : 'subtle'}
+              size="sm"
+              onClick={() => setOrderBy(key)}
+            >
+              {label}
+            </Button>
+          ))}
+        </div>
 
-          <div
-            className={`w-full text-md text-center flex flex-col text-${theme}-text rounded-lg`}
-          >
-            {ranking.map((user, index) => (
-              <div
-                key={index}
-                className={`bg-${theme}-primary w-full flex items-center py-2 gap-4
-                    ${index % 2 === 0 ? "bg-opacity-10" : "bg-opacity-5"}
-                    ${
-                      JSON.parse(sessionStorage.getItem("userData"))
-                        ? user.username ===
-                          JSON.parse(sessionStorage.getItem("userData"))
-                            .username
-                          ? `text-${theme}-primary`
-                          : `text-${theme}-text`
-                        : `text-${theme}-text`
-                    }
-                  `}
-              >
-                <p className="w-[12.5%]">#{index + 1}</p>
-                <Link
-                  to={`/profile/${user.username}`}
-                  className="w-[12.5%] hover:underline"
+        {ranking.length > 0 ? (
+          <section className="max-h-[55vh] bg-kp-surface border border-kp-border overflow-y-auto mb-8">
+            <div className="sticky top-0 bg-kp-surface border-b border-kp-border w-full flex px-4 py-3">
+              {COL_HEADERS.map(h => (
+                <p key={h} className="w-[12.5%] text-xs font-medium uppercase text-kp-accent">{h}</p>
+              ))}
+            </div>
+            <div className="flex flex-col">
+              {ranking.map((user, index) => (
+                <div
+                  key={index}
+                  className={`w-full flex items-center px-4 py-3 text-sm transition-colors
+                    ${index % 2 === 0 ? 'bg-kp-border/10' : ''}
+                    ${user.username === currentUsername ? 'text-kp-accent' : 'text-kp-text'}`}
                 >
-                  {user.username}
-                  <FontAwesomeIcon
-                    className="text-xs ml-2"
-                    icon={faArrowUpRightFromSquare}
-                  />
-                </Link>
-                <p className="w-[12.5%]">{user.bestScore}</p>
-                <p className="w-[12.5%]">{user.bestSpeed}</p>
-                <p className="w-[12.5%]">{user.avgScore}</p>
-                <p className="w-[12.5%]">{user.avgSpeed}</p>
-                <p className="w-[12.5%]">{user.avgAccuracy}</p>
-                <p className="w-[12.5%]">{user.totalTests}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      ) : (
-        <h5 className={`h-screen text-lg text-${theme}-text`}>No hay datos</h5>
-      )}
-
-      {/* Modales */}
-      <ThemeModal
-        isOpen={themeModalIsOpen}
-        setIsOpen={setThemeModalIsOpen}
-        theme={theme}
-        setTheme={setTheme}
-      />
+                  <p className="w-[12.5%] text-kp-muted">#{index + 1}</p>
+                  <Link to={`/profile/${user.username}`} className="w-[12.5%] hover:underline flex items-center gap-1">
+                    {user.username}
+                    <ExternalLink size={12} />
+                  </Link>
+                  <p className="w-[12.5%]">{user.bestScore}</p>
+                  <p className="w-[12.5%]">{user.bestSpeed}</p>
+                  <p className="w-[12.5%]">{user.avgScore}</p>
+                  <p className="w-[12.5%]">{user.avgSpeed}</p>
+                  <p className="w-[12.5%]">{user.avgAccuracy}</p>
+                  <p className="w-[12.5%]">{user.totalTests}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : (
+          <p className="text-kp-muted">No hay datos</p>
+        )}
+      </FadeUp>
     </div>
   );
 };
 
-export default Rankings;
-
 Rankings.propTypes = {
   sound: PropTypes.bool.isRequired,
   setSound: PropTypes.func.isRequired,
-  themeModalIsOpen: PropTypes.bool.isRequired,
-  setThemeModalIsOpen: PropTypes.func.isRequired,
 };
+
+export default Rankings;

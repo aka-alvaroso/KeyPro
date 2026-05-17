@@ -1,291 +1,127 @@
-// src/pages/Profile.jsx
-import axios from "axios";
+import axios from 'axios';
+import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { ArrowLeftRight, Pencil, List } from 'lucide-react';
 
-import PropTypes from "prop-types";
-import { useState, useEffect } from "react";
-import { useTheme } from "../context/ThemeContext";
-import { useParams, Link } from "react-router-dom";
+import Navbar from '../components/Navbar/Navbar';
+import StatCard from '../components/ui/StatCard';
+import Button from '../components/ui/Button';
+import FadeUp from '../components/ui/FadeUp';
 
-import Navbar from "../components/Navbar/Navbar";
-import ThemeModal from "../components/ThemeModal/ThemeModal";
-import EditProfileModal from "../components/EditProfileModal/EditProfileModal";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowRightArrowLeft,
-  faEdit,
-  faList,
-} from "@fortawesome/free-solid-svg-icons";
+const DEFAULT_USER = {
+  username: '',
+  avgScore: 0, avgAccuracy: 0, avgSpeed: 0,
+  bestScore: 0, bestSpeed: 0,
+  totalTests: 0, numErrors: 0, numCharacters: 0,
+  numEasyTests: 0, numMediumTests: 0, numHardTests: 0,
+  imageURL: 'https://t4.ftcdn.net/jpg/03/49/49/79/360_F_349497933_Ly4im8BDmHLaLzgyKg2f2yZOvJjBtlw5.webp',
+};
 
-const Profile = ({
-  sound,
-  setSound,
-  themeModalIsOpen,
-  setThemeModalIsOpen,
-}) => {
+const Profile = ({ sound, setSound }) => {
   const { username } = useParams();
-
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const { theme } = useTheme();
-  const [velocityType, setVelocityType] = useState("ppm");
-  const [userData, setUserData] = useState({
-    username: "",
-    stats: {
-      avgAccuracy: 0,
-      avgScore: 0,
-      avgSpeed: 0,
-      bestScore: 0,
-      bestSpeed: 0,
-      numCharacters: 0,
-      numEasyTests: 0,
-      numErrors: 0,
-      numHardTests: 0,
-      numMediumTests: 0,
-      totalTests: 0,
-      imageURL:
-        "https://t4.ftcdn.net/jpg/03/49/49/79/360_F_349497933_Ly4im8BDmHLaLzgyKg2f2yZOvJjBtlw5.webp",
-    },
-  });
+  const navigate = useNavigate();
+  const [velocityType, setVelocityType] = useState('ppm');
+  const [userData, setUserData] = useState(DEFAULT_USER);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/user/data`,
-          {
-            headers: {
-              // email: JSON.parse(sessionStorage.getItem('userData')).email
-              username,
-            },
-          }
-        );
-
-        if (response.status !== 200) {
-          console.error("Error al obtener el usuario:", response);
-          return;
-        }
-
-        setUserData(response.data.user);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/user/data`, { headers: { username } });
+        if (response.status === 200) setUserData(response.data.user);
       } catch (e) {
-        console.error("Error al obtener el usuario:", e);
+        console.error('Error al obtener el usuario:', e);
       }
     };
-
     fetchUser();
   }, [username]);
 
+  const isOwner = sessionStorage.getItem('loggedIn') === 'true' &&
+    userData.username === JSON.parse(sessionStorage.getItem('userData') || '{}').username;
+
+  const toggleVelocity = () => setVelocityType(v => v === 'ppm' ? 'cpm' : 'ppm');
+
   return (
-    <div
-      className={` bg-${theme}-background text-${theme}-text w-screen h-screen flex flex-col items-center gap-4`}
-    >
-      {/* Navbar */}
-      <Navbar
-        sound={sound}
-        setSound={setSound}
-        setThemeModalIsOpen={setThemeModalIsOpen}
-      />
+    <div className="bg-kp-bg text-kp-text w-screen h-screen flex flex-col items-center">
+      <Navbar sound={sound} setSound={setSound} />
 
-      <section className="w-4/5 flex items-center justify-center gap-4">
-        <div
-          className={`w-2/5 h-60 flex flex-col items-center justify-center bg-${theme}-primary bg-opacity-5 p-4 rounded-lg`}
-        >
+      <div className="w-full max-w-4xl px-6 pt-8 flex flex-col gap-8">
+
+        {/* Profile header */}
+        <FadeUp delay={0} className="flex items-center gap-6 border-b border-kp-border pb-6">
           <img
-            className="w-28 h-28 rounded-full object-cover"
+            className="w-24 h-24 rounded-full object-cover border border-kp-border"
             src={userData.imageURL}
-            alt="Profile image"
+            alt="Profile"
           />
-          <h2 className="text-2xl font-bold mt-4">{userData.username}</h2>
-          {/* <p className={`text-lg text-${theme}-primary opacity-70`}>(ToDo) #raking - Global</p> */}
-        </div>
-        <div
-          className={`w-3/5 h-60 flex items-center justify-center bg-${theme}-primary bg-opacity-5 p-4 rounded-lg gap-4`}
-        >
-          <div
-            className={`w-1/3 rounded-lg p-2 border-2 border-${theme}-primary`}
-          >
-            <p className={`text-${theme}-text`}>Puntuación media</p>
-            <p className="text-center text-7xl font-bold">
-              {userData.avgScore}
-              <span className={`text-2xl font-bold text-${theme}-primary`}>
-                pts.
-              </span>
-            </p>
+          <div>
+            <p className="text-xs text-kp-muted uppercase tracking-widest mb-1">Perfil</p>
+            <h2 className="text-2xl font-medium text-kp-text">{userData.username}</h2>
           </div>
-          <div
-            className={`w-1/3 relative rounded-lg p-2 border-2 border-${theme}-primary`}
-          >
-            <button
-              onClick={() =>
-                setVelocityType(velocityType === "ppm" ? "cpm" : "ppm")
-              }
-              className={`absolute top-2 right-4 hover:text-${theme}-primary transition`}
-            >
-              <FontAwesomeIcon icon={faArrowRightArrowLeft} />
-            </button>
-            <p className={`text-${theme}-text`}>Velocidad media</p>
-            {velocityType === "ppm" ? (
-              <p className="text-center text-7xl font-bold">
-                {Math.trunc((userData.avgSpeed / 5) * 10) / 10}
-                <span className={`text-2xl font-bold text-${theme}-primary`}>
-                  PPM
-                </span>
-              </p>
-            ) : (
-              <p className="text-center text-7xl font-bold">
-                {userData.avgSpeed}
-                <span className={`text-2xl font-bold text-${theme}-primary`}>
-                  CPM
-                </span>
-              </p>
+          <div className="ml-auto flex gap-3">
+            {isOwner && (
+              <Button variant="subtle" onClick={() => navigate('/settings', { state: { tab: 'account' } })}>
+                <Pencil size={14} /> Editar perfil
+              </Button>
             )}
+            <Link to={`/history/${username}`}>
+              <Button variant="subtle">
+                <List size={14} /> Historial
+              </Button>
+            </Link>
           </div>
-          <div
-            className={`w-1/3 rounded-lg p-2 border-2 border-${theme}-primary`}
-          >
-            <p className={`text-${theme}-text`}>Precisión media</p>
-            <p className="text-center text-7xl font-bold">
-              {userData.avgAccuracy}
-              <span className={`text-2xl font-bold text-${theme}-primary`}>
-                %
-              </span>
-            </p>
+        </FadeUp>
+
+        {/* Top stats */}
+        <FadeUp delay={0.08}>
+          <p className="text-xs text-kp-muted uppercase tracking-widest mb-3">Estadísticas principales</p>
+          <div className="grid grid-cols-3 gap-3">
+            <StatCard label="Puntuación media" value={userData.avgScore} unit="pts." />
+            <StatCard label="Velocidad media" className="relative">
+              <button onClick={toggleVelocity} className="absolute top-4 right-4 text-kp-muted hover:text-kp-accent transition-colors">
+                <ArrowLeftRight size={12} />
+              </button>
+              <p className="text-center text-4xl font-medium text-kp-text">
+                {velocityType === 'ppm' ? Math.trunc((userData.avgSpeed / 5) * 10) / 10 : userData.avgSpeed}
+                <span className="text-lg font-medium text-kp-accent ml-1">{velocityType.toUpperCase()}</span>
+              </p>
+            </StatCard>
+            <StatCard label="Precisión media" value={userData.avgAccuracy} unit="%" />
           </div>
-        </div>
-      </section>
+        </FadeUp>
 
-      <section
-        className={`w-4/5 h-72 flex flex-wrap items-center justify-center bg-${theme}-primary bg-opacity-5 p-4 rounded-lg gap-4`}
-      >
-        <div
-          className={`w-1/5 rounded-lg p-2 border-2 border-${theme}-primary`}
-        >
-          <p className={`text-${theme}-text`}>Mejor puntuación</p>
-          <p className="text-center text-7xl font-bold">
-            {userData.bestScore}
-            <span className={`text-2xl font-bold text-${theme}-primary`}>
-              pts.
-            </span>
-          </p>
-        </div>
-        <div
-          className={`w-1/5 relative rounded-lg p-2 border-2 border-${theme}-primary`}
-        >
-          <button
-            onClick={() =>
-              setVelocityType(velocityType === "ppm" ? "cpm" : "ppm")
-            }
-            className={`absolute top-2 right-4 hover:text-${theme}-primary transition`}
-          >
-            <FontAwesomeIcon icon={faArrowRightArrowLeft} />
-          </button>
-          <p className={`text-${theme}-text`}>Mejor velocidad</p>
-          {velocityType === "ppm" ? (
-            <p className="text-center text-7xl font-bold">
-              {userData.bestSpeed / 5}
-              <span className={`text-2xl font-bold text-${theme}-primary`}>
-                PPM
-              </span>
-            </p>
-          ) : (
-            <p className="text-center text-7xl font-bold">
-              {userData.bestSpeed}
-              <span className={`text-2xl font-bold text-${theme}-primary`}>
-                CPM
-              </span>
-            </p>
-          )}
-        </div>
-        <div
-          className={`w-1/5 rounded-lg p-2 border-2 border-${theme}-primary`}
-        >
-          <p className={`text-${theme}-text`}>Tests jugados</p>
-          <p className="text-center text-7xl font-bold">
-            {userData.totalTests}
-          </p>
-        </div>
-        <div
-          className={`w-1/5 rounded-lg p-2 border-2 border-${theme}-primary`}
-        >
-          <p className={`text-${theme}-text`}>Número de errores</p>
-          <p className="text-center text-7xl font-bold">
-            {userData.numErrors}
-          </p>
-        </div>
+        {/* Extended stats */}
+        <FadeUp delay={0.14}>
+          <p className="text-xs text-kp-muted uppercase tracking-widest mb-3">Desglose</p>
+          <div className="grid grid-cols-4 gap-3">
+            <StatCard label="Mejor puntuación" value={userData.bestScore} unit="pts." />
+            <StatCard label="Mejor velocidad" className="relative">
+              <button onClick={toggleVelocity} className="absolute top-4 right-4 text-kp-muted hover:text-kp-accent transition-colors">
+                <ArrowLeftRight size={12} />
+              </button>
+              <p className="text-center text-4xl font-medium text-kp-text">
+                {velocityType === 'ppm' ? Math.trunc((userData.bestSpeed / 5) * 10) / 10 : userData.bestSpeed}
+                <span className="text-lg font-medium text-kp-accent ml-1">{velocityType.toUpperCase()}</span>
+              </p>
+            </StatCard>
+            <StatCard label="Tests jugados" value={userData.totalTests} />
+            <StatCard label="Número de errores" value={userData.numErrors} />
+            <StatCard label="Caracteres escritos" value={userData.numCharacters} />
+            <StatCard label="Tests fáciles" value={userData.numEasyTests} />
+            <StatCard label="Tests medios" value={userData.numMediumTests} />
+            <StatCard label="Tests difíciles" value={userData.numHardTests} />
+          </div>
+        </FadeUp>
 
-        {/* --------------- */}
-
-        <div
-          className={`w-1/5 rounded-lg p-2 border-2 border-${theme}-primary`}
-        >
-          <p className={`text-${theme}-text`}>Número de caracteres</p>
-          <p className="text-center text-7xl font-bold">
-            {userData.numCharacters}
-          </p>
-        </div>
-        <div
-          className={`w-1/5 rounded-lg p-2 border-2 border-${theme}-primary`}
-        >
-          <p className={`text-${theme}-text`}>Tests fáciles jugados</p>
-          <p className="text-center text-7xl font-bold">
-            {userData.numEasyTests}
-          </p>
-        </div>
-        <div
-          className={`w-1/5 rounded-lg p-2 border-2 border-${theme}-primary`}
-        >
-          <p className={`text-${theme}-text`}>Tests medios jugados</p>
-          <p className="text-center text-7xl font-bold">
-            {userData.numMediumTests}
-          </p>
-        </div>
-        <div
-          className={`w-1/5 rounded-lg p-2 border-2 border-${theme}-primary`}
-        >
-          <p className={`text-${theme}-text`}>Tests difíciles jugados</p>
-          <p className="text-center text-7xl font-bold">
-            {userData.numHardTests}
-          </p>
-        </div>
-      </section>
-
-      <div className="flex gap-4">
-        {sessionStorage.getItem("loggedIn") === "true" &&
-        userData.username ===
-          JSON.parse(sessionStorage.getItem("userData")).username ? (
-          <button
-            onClick={() => setIsProfileModalOpen(true)}
-            className={`bg-${theme}-primary bg-opacity-20 py-2 px-4 rounded-md text-md font-bold text-${theme}-primary hover:bg-opacity-75 hover:text-${theme}-background transition`}
-          >
-            <FontAwesomeIcon icon={faEdit} /> Editar perfil
-          </button>
-        ) : (
-          ""
-        )}
-        <Link to={`/history/${username}`}>
-          <button
-            className={`bg-${theme}-primary bg-opacity-20 py-2 px-4 rounded-md text-md font-bold text-${theme}-primary hover:bg-opacity-75 hover:text-${theme}-background transition`}
-          >
-            <FontAwesomeIcon icon={faList} /> Historial
-          </button>
-        </Link>
       </div>
 
-      {/* Modales */}
-      <ThemeModal isOpen={themeModalIsOpen} setIsOpen={setThemeModalIsOpen} />
-      <EditProfileModal
-        isOpen={isProfileModalOpen}
-        setIsOpen={setIsProfileModalOpen}
-        userData={userData}
-        setUserData={setUserData}
-      />
     </div>
   );
 };
 
-export default Profile;
-
 Profile.propTypes = {
   sound: PropTypes.bool.isRequired,
   setSound: PropTypes.func.isRequired,
-  themeModalIsOpen: PropTypes.bool.isRequired,
-  setThemeModalIsOpen: PropTypes.func.isRequired,
 };
+
+export default Profile;

@@ -1,321 +1,106 @@
-// src/pages/History.jsx
-import axios from "axios";
+import axios from 'axios';
+import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 
-import PropTypes from "prop-types";
-import { useState, useEffect } from "react";
-import { useTheme } from "../context/ThemeContext";
-import { Link, useParams } from "react-router-dom";
+import Navbar from '../components/Navbar/Navbar';
+import StatCard from '../components/ui/StatCard';
 
-import Navbar from "../components/Navbar/Navbar";
-import ThemeModal from "../components/ThemeModal/ThemeModal";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
+const LANG_LABELS = {
+  es: 'Español', en: 'English', python: 'Python',
+  javascript: 'JavaScript', 'c++': 'C++', html: 'HTML', java: 'Java',
+};
 
-const TestPreview = ({
-  sound,
-  setSound,
-  themeModalIsOpen,
-  setThemeModalIsOpen,
-}) => {
+const TestPreview = ({ sound, setSound }) => {
   const { id } = useParams();
-
-  const { theme, setTheme } = useTheme();
-  const [test, setTest] = useState(undefined);
+  const [test, setTest] = useState(null);
 
   useEffect(() => {
-    const fetchHistory = async () => {
+    const fetchTest = async () => {
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/test/get/` + id
-        );
-
-        if (response.status !== 200) {
-          console.error("Error al obtener el test:", response);
-          return;
-        }
-
-        // console.log('Test:', response.data);
-        setTest(response.data);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/test/get/${id}`);
+        if (response.status === 200) setTest(response.data);
       } catch (e) {
-        console.error("Error al obtener el test:", e);
+        console.error('Error al obtener el test:', e);
       }
     };
-
-    fetchHistory();
+    fetchTest();
   }, [id]);
 
-  const renderText = () => {
-    return test.text.split("").map((char, index) => {
-      let className = "";
-
-      className =
-        test.charResults[index] === "correct"
-          ? "transition text-green-600 underline "
-          : "transition text-red-600  underline";
-      return (
-        <span key={index} className={`${className}`}>
-          {char}
-        </span>
-      );
-    });
-  };
+  const renderText = () => test.text.split('').map((char, index) => (
+    <span
+      key={index}
+      className={test.charResults[index] === 'correct'
+        ? 'text-kp-text/70 underline'
+        : 'text-red-500 underline'}
+    >
+      {char}
+    </span>
+  ));
 
   return (
-    <div
-      className={` bg-${theme}-background text-${theme}-text w-screen h-screen flex flex-col items-center gap-4`}
-    >
-      {/* Navbar */}
-      <Navbar
-        sound={sound}
-        setSound={setSound}
-        setThemeModalIsOpen={setThemeModalIsOpen}
-      />
+    <div className="bg-kp-bg text-kp-text w-screen h-screen flex flex-col items-center gap-4">
+      <Navbar sound={sound} setSound={setSound} />
 
-      {test != null || test != undefined ? (
-        <main className="w-full flex items-center">
-          <section className={`w-4/6 flex flex-col items-center gap-4 p-4`}>
+      {test ? (
+        <main className="w-full flex items-start">
+          <section className="w-4/6 flex flex-col items-center gap-6 p-4">
             <div className="w-full flex flex-col items-center gap-4">
-              <p className={` font-bold text-3xl text-left w-4/6`}>
-                Información del test
-              </p>
-              <div
-                id="test-container"
-                className={`w-4/6 text-3xl tracking-wider leading-9`}
-              >
-                {renderText()}
-              </div>
+              <p className="font-medium text-2xl text-left w-4/6">Texto</p>
+              <div className="w-4/6 text-2xl tracking-wider leading-9">{renderText()}</div>
             </div>
 
-            <div className="w-full flex flex-col items-center gap-4 mt-8 ">
-              <p className={` font-bold text-3xl text-left w-4/6`}>
-                Resultados
-              </p>
-              <div className={`w-4/6 rounded-lg grid grid-cols-3 gap-2`}>
-                <section
-                  className={`rounded-lg p-2 border-2 border-${theme}-primary`}
-                >
-                  <p className={`text-${theme}-text`}>Puntuación</p>
-                  <p className="text-center text-7xl font-bold">
-                    {test.results["score"]}
-                    <span
-                      className={`text-2xl font-bold text-${theme}-primary`}
-                    >
-                      pts.
-                    </span>
-                  </p>
-                </section>
-                <section
-                  className={`relative rounded-lg p-2 border-2 border-${theme}-primary`}
-                >
-                  <p className={`text-${theme}-text`}>Velocidad </p>
-                  <p className="text-center text-7xl font-bold">
-                    {test.results["speed"]}
-                    <span
-                      className={`text-2xl font-bold text-${theme}-primary`}
-                    >
-                      CPM
-                    </span>
-                  </p>
-                </section>
-                <section
-                  className={`rounded-lg p-2 border-2 border-${theme}-primary`}
-                >
-                  <p className={`text-${theme}-text`}>Precisión</p>
-                  <p className="text-center text-7xl font-bold">
-                    {test.results["accuracy"]}
-                    <span
-                      className={`text-2xl font-bold text-${theme}-primary`}
-                    >
-                      %
-                    </span>
-                  </p>
-                </section>
-                <section
-                  className={`rounded-lg p-2 border-2 border-${theme}-primary`}
-                >
-                  <p className={`text-${theme}-text`}>Número de errores</p>
-                  <p className="text-center text-7xl font-bold">
-                    {test.results["numErrors"]}
-                    <span
-                      className={`text-2xl font-bold text-${theme}-primary`}
-                    >
-                      err.
-                    </span>
-                  </p>
-                </section>
-                <section
-                  className={`rounded-lg p-2 border-2 border-${theme}-primary`}
-                >
-                  <p className={`text-${theme}-text`}>Tiempo</p>
-                  <p className="text-center text-7xl font-bold">
-                    {test.results["time"]}
-                    <span
-                      className={`text-2xl font-bold text-${theme}-primary`}
-                    >
-                      seg.
-                    </span>
-                  </p>
-                </section>
-                <section
-                  className={`rounded-lg p-2 border-2 border-${theme}-primary`}
-                >
-                  <p className={`text-${theme}-text`}>Caracteres escritos</p>
-                  <p className="text-center text-7xl font-bold">
-                    {test.results["numCharacters"]}
-                    <span
-                      className={`text-2xl font-bold text-${theme}-primary`}
-                    >
-                      car.
-                    </span>
-                  </p>
-                </section>
+            <div className="w-full flex flex-col items-center gap-4">
+              <p className="font-medium text-2xl text-left w-4/6">Resultados</p>
+              <div className="w-4/6 grid grid-cols-3 gap-3">
+                <StatCard label="Puntuación" value={test.results.score} unit="pts." />
+                <StatCard label="Velocidad" value={test.results.speed} unit="CPM" />
+                <StatCard label="Precisión" value={test.results.accuracy} unit="%" />
+                <StatCard label="Errores" value={test.results.numErrors} unit="err." />
+                <StatCard label="Tiempo" value={test.results.time} unit="seg." />
+                <StatCard label="Caracteres" value={test.results.numCharacters} unit="car." />
               </div>
             </div>
           </section>
 
-          <section
-            className={`w-2/6 h-full flex flex-col justify-center gap-4 p-4`}
-          >
-            <div
-              className={`w-5/6 flex flex-col items-center gap-4 bg-${theme}-primary bg-opacity-5 rounded-lg py-12 px-4`}
-            >
-              <p className={`font-bold text-3xl text-left`}>Otros datos</p>
+          <section className="w-2/6 flex justify-center p-4 pt-8">
+            <div className="w-5/6 bg-kp-surface border border-kp-border rounded-xl py-8 px-6 flex flex-col gap-4">
+              <p className="font-medium text-xl">Detalles</p>
 
-              {/* 
-                Jugador
-                Fecha
-                Modo
-                Tipo
-                Dificultad
-                Lenguaje              
-              */}
-              <div className={`w-full mt-1 flex gap-2 items-center`}>
-                <p
-                  className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-70 py-1 px-2 rounded`}
-                >
-                  Jugador
-                </p>
-                <Link
-                  to={`/profile/${test.player}`}
-                  className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-20 py-1 px-2 rounded hover:text-${theme}-primary transition`}
-                >
-                  {test.player}
-                  <FontAwesomeIcon
-                    className="text-xs ml-2"
-                    icon={faArrowUpRightFromSquare}
-                  />
-                </Link>
-              </div>
-
-              <div className={`w-full mt-1 flex gap-2 items-center`}>
-                <p
-                  className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-70 py-1 px-2 rounded`}
-                >
-                  Fecha
-                </p>
-                <p
-                  className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-20 py-1 px-2 rounded`}
-                >
-                  {test.date}
-                </p>
-              </div>
-
-              <div className={`w-full mt-1 flex gap-2 items-center`}>
-                <p
-                  className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-70 py-1 px-2 rounded`}
-                >
-                  Modo
-                </p>
-                <p
-                  className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-20 py-1 px-2 rounded`}
-                >
-                  {test.settings.mode === "practice"
-                    ? "Práctica"
-                    : test.settings.mode === "timed"
-                    ? "Cronómetro"
-                    : "Competitivo"}
-                </p>
-              </div>
-
-              <div className={`w-full mt-1 flex gap-2 items-center`}>
-                <p
-                  className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-70 py-1 px-2 rounded`}
-                >
-                  Tipo
-                </p>
-                <p
-                  className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-20 py-1 px-2 rounded`}
-                >
-                  {test.settings.type === "text" ? "Texto" : "Código"}
-                </p>
-              </div>
-
-              <div className={`w-full mt-1 flex gap-2 items-center`}>
-                <p
-                  className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-70 py-1 px-2 rounded`}
-                >
-                  Dificultad
-                </p>
-                <p
-                  className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-20 py-1 px-2 rounded`}
-                >
-                  {test.settings.difficulty === "easy"
-                    ? "Fácil"
-                    : test.settings.difficulty === "medium"
-                    ? "Medio"
-                    : "Difícil"}
-                </p>
-              </div>
-
-              <div className={`w-full mt-1 flex gap-2 items-center`}>
-                <p
-                  className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-70 py-1 px-2 rounded`}
-                >
-                  Lenguaje
-                </p>
-                <p
-                  className={`ml-1 text-${theme}-text bg-${theme}-primary bg-opacity-20 py-1 px-2 rounded`}
-                >
-                  {test.settings.language === "es"
-                    ? "Español"
-                    : test.settings.language === "en"
-                    ? "English"
-                    : test.settings.language === "python"
-                    ? "Python"
-                    : test.settings.language === "javascript"
-                    ? "JavaScript"
-                    : test.settings.language === "c++"
-                    ? "C++"
-                    : test.settings.language === "html"
-                    ? "HTML"
-                    : test.settings.language === "java"
-                    ? "Java"
-                    : "Error"}
-                </p>
-              </div>
+              {[
+                ['Jugador', test.player, true],
+                ['Fecha', test.date, false],
+                ['Modo', { practice: 'Práctica', timed: 'Cronómetro', competitive: 'Competitivo' }[test.settings.mode], false],
+                ['Tipo', test.settings.type === 'text' ? 'Texto' : 'Código', false],
+                ['Dificultad', { easy: 'Fácil', medium: 'Medio', hard: 'Difícil' }[test.settings.difficulty], false],
+                ['Lenguaje', LANG_LABELS[test.settings.language] ?? test.settings.language, false],
+              ].map(([label, value, isLink]) => (
+                <div key={label} className="flex items-center gap-2 text-sm">
+                  <span className="bg-kp-accent/20 text-kp-text px-2 py-1 rounded font-medium min-w-24">{label}</span>
+                  {isLink ? (
+                    <Link to={`/profile/${value}`} className="bg-kp-surface border border-kp-border px-2 py-1 rounded hover:text-kp-accent transition-colors flex items-center gap-1">
+                      {value} <FontAwesomeIcon className="text-xs" icon={faArrowUpRightFromSquare} />
+                    </Link>
+                  ) : (
+                    <span className="bg-kp-bg border border-kp-border px-2 py-1 rounded text-kp-muted">{value}</span>
+                  )}
+                </div>
+              ))}
             </div>
           </section>
         </main>
       ) : (
-        <h5 className={`text-lg text-${theme}-text`}>No hay datos</h5>
+        <p className="text-kp-muted">No hay datos</p>
       )}
-
-      {/* Modales */}
-      <ThemeModal
-        isOpen={themeModalIsOpen}
-        setIsOpen={setThemeModalIsOpen}
-        theme={theme}
-        setTheme={setTheme}
-      />
     </div>
   );
 };
 
-export default TestPreview;
-
 TestPreview.propTypes = {
   sound: PropTypes.bool.isRequired,
   setSound: PropTypes.func.isRequired,
-  themeModalIsOpen: PropTypes.bool.isRequired,
-  setThemeModalIsOpen: PropTypes.func.isRequired,
 };
+
+export default TestPreview;

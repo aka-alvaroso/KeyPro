@@ -1,14 +1,13 @@
-import { createRoot } from 'react-dom/client'
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { ThemeProvider } from './context/ThemeContext';
-import App from './App.jsx'
-import './index.css'
-
+import { SettingsProvider } from './context/SettingsContext';
+import App from './App.jsx';
+import './index.css';
 
 createRoot(document.getElementById('root')).render(
   <Router basename="/keypro">
-    <ThemeProvider>
+    <SettingsProvider>
       <App />
-    </ThemeProvider>
+    </SettingsProvider>
   </Router>,
-)
+);
