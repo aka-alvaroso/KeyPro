@@ -17,8 +17,8 @@ const trailingSlashRedirect = {
 };
 
 export default defineConfig({
-  plugins: [react(), trailingSlashRedirect],
-  base: '/keypro/',
+  plugins: [react()],
+  base: '/',
   server: {
     port: 3000,
   },
