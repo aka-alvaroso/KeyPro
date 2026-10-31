@@ -58,8 +58,12 @@ io.on("connection", (socket) => {
 });
 
 const PORT = process.env.PORT || 3001;
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Listen on loopback by default: in production the reverse proxy (Caddy) is
+// the only client, so the app must not be reachable directly on a public
+// interface. Set BIND_ADDRESS=0.0.0.0 to expose it (e.g. inside a container).
+const BIND_ADDRESS = process.env.BIND_ADDRESS || "127.0.0.1";
+server.listen(PORT, BIND_ADDRESS, () => {
+  console.log(`Server running on ${BIND_ADDRESS}:${PORT}`);
 });
 
 module.exports = app;
